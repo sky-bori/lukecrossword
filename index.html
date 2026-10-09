@@ -289,9 +289,52 @@ html:-webkit-full-screen .wrap{max-width:1500px}
 #sndBtn[aria-pressed="false"] .on{display:none}
 #sndBtn[aria-pressed="false"] .off{display:block}
 @media (max-width:520px){#sndLabel{display:none}}
+
+/* ===== 새 퍼즐: 단어 미리보기 (위에서 내려오는 시트) ===== */
+#gate{position:absolute;inset:0;z-index:35;background:rgba(3,8,22,.84);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);overflow:hidden}
+.gate-sheet{position:absolute;left:0;right:0;top:0;display:grid;gap:10px;padding:14px;background:#0A1A3A;border-bottom:1px solid #2A5DA0;box-shadow:0 10px 30px rgba(0,0,0,.55),0 0 26px rgba(34,228,255,.2);max-height:100%}
+.gate-sheet.open{bottom:0;grid-template-rows:auto minmax(0,1fr) auto}
+.gq b{display:block;font:700 17px/1.3 var(--f-body)}
+.gq span{display:block;font-size:13px;color:var(--ink-2);margin-top:3px}
+.grow{display:flex;gap:8px;flex-wrap:wrap}
+.grow .btn{flex:1 1 120px;min-height:42px}
+.gpv{display:flex;align-items:baseline;gap:8px}
+.gpv b{font:700 15px/1.2 var(--f-body)}
+.gpv small{font:600 11px var(--f-mono);color:var(--accent);letter-spacing:.1em}
+.gcards{overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:5px;align-content:start;padding-right:2px}
+.gcard{display:flex;align-items:baseline;gap:10px;min-width:0;padding:6px 10px;border:1px solid #16386A;border-radius:3px;background:rgba(34,228,255,.05)}
+.gen{flex:none;font:700 14px/1.1 var(--f-display);color:var(--hi);letter-spacing:.04em;text-shadow:0 0 8px rgba(255,230,0,.35)}
+.gko{font-size:12.5px;color:var(--ink);min-width:0;overflow-wrap:anywhere}
+.gfoot{display:grid;gap:6px}
+.gfoot small{font-size:11.5px;color:var(--ink-2);text-align:center}
+.gfoot .btn{width:100%;min-height:44px}
+.btn.gstart{background:linear-gradient(90deg,#22E4FF,#3A8DFF);color:var(--accent-ink);border-color:transparent;box-shadow:0 0 18px rgba(34,228,255,.45)}
+@media (prefers-reduced-motion:no-preference){ .gate-sheet{animation:gdrop .35s cubic-bezier(.2,.9,.3,1)} }
+@keyframes gdrop{0%{transform:translateY(-30px);opacity:0}100%{transform:translateY(0);opacity:1}}
+/* ---- 시작 카운트다운 (A 네온 링) ---- */
+#cdown{position:absolute;inset:0;z-index:36;display:grid;place-items:center;background:rgba(3,8,22,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer;overflow:hidden}
+.cdn{--d:clamp(120px,36vmin,200px);position:relative;display:grid;place-items:center;width:var(--d);height:var(--d);font-size:calc(var(--d)*.48)}
+.cdn .ring{overflow:visible;position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.cdn .trk{fill:none;stroke:#12335f;stroke-width:3}
+.cdn .arc{fill:none;stroke:#22E4FF;stroke-width:3.5;stroke-linecap:round;stroke-dasharray:276.5;stroke-dashoffset:0;filter:drop-shadow(0 0 6px #22E4FF)}
+.cdn .t{font:900 1em/1 var(--f-display);color:#EFFFFF;text-shadow:0 0 .14em #22E4FF,0 0 .36em #22E4FF;font-variant-numeric:tabular-nums}
+.cdn.go .t{font-size:.5em;letter-spacing:.06em;color:#FFE600;text-shadow:0 0 .25em #FFE600,0 0 .6em #FFB800;white-space:nowrap}
+.cdn .b1,.cdn .b2{position:absolute;inset:9%;border-radius:50%;border:3px solid #FFE600;opacity:.5}
+.cdskip{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:12px;color:var(--ink-2)}
+@media (prefers-reduced-motion:no-preference){
+  .cdn .arc{animation:cdar .8s linear forwards}
+  .cdn .t{animation:cdap .9s ease-out forwards}
+  .cdn.go .t{animation:cdag 1s cubic-bezier(.2,1.6,.4,1) forwards}
+  .cdn .b1{animation:cdab .9s ease-out forwards}.cdn .b2{animation:cdab .9s .15s ease-out forwards}
+}
+@keyframes cdar{to{stroke-dashoffset:276.5}}
+@keyframes cdap{0%{transform:scale(1.7);opacity:0}18%{transform:scale(1);opacity:1}78%{opacity:1}100%{transform:scale(.8);opacity:0}}
+@keyframes cdag{0%{transform:scale(.4);opacity:0;letter-spacing:.5em}35%{transform:scale(1.12);opacity:1;letter-spacing:.06em}100%{transform:scale(1);opacity:1}}
+@keyframes cdab{0%{transform:scale(.5);opacity:.7}100%{transform:scale(2.4);opacity:0}}
 </style>
 </head>
 <body>
+
 <div class="wrap">
   <canvas id="fxc" aria-hidden="true"></canvas><div id="fxflash" aria-hidden="true"></div>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -371,6 +414,8 @@ html:-webkit-full-screen .wrap{max-width:1500px}
         <button class="btn pri" id="checkBtn" type="button">확인</button>
       </div>
       <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      <div class="gate" id="gate" hidden></div>
+      <div class="cdown" id="cdown" hidden role="status" aria-live="assertive" aria-label="시작 카운트다운"></div>
       <div class="banner" id="banner" hidden role="dialog" aria-modal="false" aria-label="퍼즐 결과">
         <div class="pop">
           <button class="pclose" id="popClose" type="button" aria-label="닫기">×</button>
@@ -692,7 +737,7 @@ function fmt(s){ const m=Math.floor(s/60), r=s%60; return String(m).padStart(2,'
 function setMsg(t){ $('msg').textContent=t||''; }
 
 /* ---------- build ---------- */
-function newPuzzle(){
+function newPuzzle(ask){
   const p=pool();
   if(p.length<3){ setMsg('이 구간에는 퍼즐에 쓸 수 있는 단어가 3개 미만이에요. Day 범위를 넓혀 주세요.'); return; }
   const btn=$('newBtn'); btn.disabled=true; btn.textContent='만드는 중…'; setMsg('');
@@ -711,10 +756,11 @@ function newPuzzle(){
     if(TABLET.matches) window.scrollTo(0,0);
     if(S.puz.words.length<n) setMsg(n+'개 중 '+S.puz.words.length+'개만 배치됐어요. 한 번 더 만들면 더 채워질 수 있어요.');
     renderPool();
+    if(ask===true) showGate(); else hideGate();
   },30);
 }
 function resetState(){
-  const P=S.puz; S.right=new Set();
+  const P=S.puz; S.right=new Set(); S.gate=false; stopCountdown(); { const g=$('gate'); if(g){ g.hidden=true; g.textContent=''; } }
   S.ans=Array.from({length:P.H},()=>Array(P.W).fill(''));
   S.lock=Array.from({length:P.H},()=>Array(P.W).fill(false));
   S.mark=Array.from({length:P.H},()=>Array(P.W).fill(0));
@@ -909,7 +955,7 @@ function checkSolved(){
 
 /* ---------- actions ---------- */
 function doCheck(){
-  const P=S.puz; if(!P||S.solved) return;
+  const P=S.puz; if(!P||S.solved||S.gate) return;
   let bad=0, empty=0;
   for(let y=0;y<P.H;y++)for(let x=0;x<P.W;x++){
     const c=P.cells[y][x]; if(!c) continue;
@@ -921,7 +967,7 @@ function doCheck(){
   paint();
 }
 function doLetter(){
-  if(!S.puz||S.solved) return;
+  if(!S.puz||S.solved||S.gate) return;
   if(S.hintLeft<=0){ setMsg('한글자 힌트는 한 판에 '+HINT_MAX+'번만 쓸 수 있어요.'); return; }
   const need=p=>S.ans[p.y][p.x]!==cellAt(p.x,p.y).ch;
   const cur={x:S.sel.x,y:S.sel.y};
@@ -937,7 +983,7 @@ function doLetter(){
   const fresh=syncRight(); if(!done) advanceIfDone(fresh); paint(); if(!done) celebrateWords(fresh);
 }
 function doReset(){
-  if(!S.puz) return;
+  if(!S.puz||S.gate) return;
   resetState(); setMsg(''); selectWord(activeIdx()>=0?activeIdx():0);
 }
 function focusKb(){ try{ $('kb').focus({preventScroll:true}); }catch(e){} }
@@ -949,6 +995,7 @@ $('grid').addEventListener('click',e=>{
 });
 const kb=$('kb');
 kb.addEventListener('input',()=>{
+  if(S.gate){ kb.value=' '; return; }
   const v=kb.value;
   if(v.length===0){ backspace(); }
   else { const letters=v.toLowerCase().replace(/[^a-z]/g,''); for(const ch of letters) putLetter(ch); }
@@ -958,7 +1005,7 @@ kb.addEventListener('input',()=>{
 document.addEventListener('keydown',e=>{
   const t=e.target;
   if(t&&t!==kb&&(t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.tagName==='INPUT')) return;
-  if(!S.puz||e.ctrlKey||e.metaKey||e.altKey) return;
+  if(!S.puz||e.ctrlKey||e.metaKey||e.altKey||S.gate) return;
   const plain=(t===kb||t===document.body||t===document.documentElement);
   if(/^Key[A-Z]$/.test(e.code)){ e.preventDefault(); putLetter(e.code.charAt(3).toLowerCase()); return; }
   switch(e.key){
@@ -972,7 +1019,7 @@ document.addEventListener('keydown',e=>{
     case ' ': if(plain){ e.preventDefault(); toggleDir(); } break;
   }
 });
-$('newBtn').addEventListener('click',newPuzzle);
+$('newBtn').addEventListener('click',()=>newPuzzle(true));
 $('checkBtn').addEventListener('click',doCheck);
 $('letterBtn').addEventListener('click',()=>{ doLetter(); focusKb(); });
 $('resetBtn').addEventListener('click',doReset);
@@ -1081,6 +1128,58 @@ function celebrateWords(fresh){
     },n*220);
   });
 }
+/* ---------- 새 퍼즐: 단어 미리보기 ---------- */
+function gmk(tag,cls,txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+var cdTimers=[];
+function stopCountdown(){ cdTimers.forEach(clearTimeout); cdTimers=[]; const c=$('cdown'); if(c){ c.hidden=true; c.textContent=''; } }
+function hideGate(){ stopCountdown(); S.gate=false; const g=$('gate'); g.hidden=true; g.textContent=''; }
+function cdStep(label){
+  const go=label==='START!', c=$('cdown'); c.textContent='';
+  const w=gmk('div','cdn'+(go?' go':''));
+  w.innerHTML=(go?'<span class="b1"></span><span class="b2"></span>':'<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="44"/><circle class="arc" cx="50" cy="50" r="44"/></svg>')+'<span class="t"></span>';
+  w.querySelector('.t').textContent=label; c.append(w);
+  const ctx=audio(); if(ctx){ sfxLog('count'+label); const t=ctx.currentTime+.01;
+    if(go){ tone('square',880,880,t,.16,.16); tone('triangle',1318.5,1318.5,t+.14,.42,.2); tone('sine',2637,2637,t+.14,.3,.05); }
+    else tone('square',label==='1'?740:560,label==='1'?740:560,t,.14,.13); }
+}
+function runCountdown(done){
+  const c=$('cdown'); c.hidden=false; let fin=false;
+  const end=()=>{ if(fin) return; fin=true; stopCountdown(); done(); };
+  c.onclick=end;
+  try{ const r=c.getBoundingClientRect(), mid=r.top+r.height/2, vh=window.innerHeight; if(mid<vh*.25||mid>vh*.75) window.scrollBy(0,mid-vh/2); }catch(e){}
+  ['3','2','1','START!'].forEach((l,i)=>cdTimers.push(setTimeout(()=>cdStep(l),i*900)));
+  cdTimers.push(setTimeout(end,3*900+1000));
+}
+function startGame(){
+  const g=$('gate'); g.hidden=true; g.textContent=''; S.gate=true; focusKb();
+  runCountdown(()=>{ S.gate=false; focusKb(); paint(); });
+}
+function showGate(){
+  const P=S.puz, g=$('gate'); S.gate=true; g.textContent=''; g.hidden=false;
+  try{ if(document.activeElement&&document.activeElement.blur) document.activeElement.blur(); }catch(e){}
+  const sheet=gmk('div','gate-sheet'); sheet.setAttribute('role','dialog'); sheet.setAttribute('aria-modal','true'); sheet.setAttribute('aria-label','단어 미리보기');
+  const q=gmk('div','gq'); q.append(gmk('b',null,'단어 미리보기 하시겠습니까?'), gmk('span',null,'이번 퍼즐의 단어 '+P.words.length+'개와 뜻을 먼저 볼 수 있어요.'));
+  const row=gmk('div','grow'), bp=gmk('button','btn','미리보기'), bg=gmk('button','btn pri','바로 시작');
+  bp.type='button'; bg.type='button'; bp.id='gatePreview'; bg.id='gateGo';
+  row.append(bp,bg); sheet.append(q,row); g.append(sheet);
+  bg.addEventListener('click',startGame); bp.addEventListener('click',showPvList);
+  try{ sheet.scrollIntoView({block:'nearest'}); }catch(e){}
+  try{ bp.focus({preventScroll:true}); }catch(e){}
+}
+function showPvList(){
+  const P=S.puz, g=$('gate'); g.textContent='';
+  const words=P.words.map(w=>({w:w.w,k:w.k||''})).sort((a,b)=>a.w<b.w?-1:a.w>b.w?1:0);
+  const sheet=gmk('div','gate-sheet open'); sheet.setAttribute('role','dialog'); sheet.setAttribute('aria-modal','true'); sheet.setAttribute('aria-label','이번 퍼즐 단어');
+  const head=gmk('div','gpv'); head.append(gmk('b',null,'이번 퍼즐 단어'), gmk('small',null,words.length+'개'));
+  const list=gmk('div','gcards'); words.forEach(x=>{ const c=gmk('div','gcard'); c.append(gmk('span','gen',x.w), gmk('span','gko',x.k)); list.append(c); });
+  const foot=gmk('div','gfoot'), st=gmk('button','btn gstart','시작'); st.type='button'; st.id='gateStart';
+  foot.append(st, gmk('small',null,'시작하면 퍼즐판이 열려요'));
+  sheet.append(head,list,foot); g.append(sheet);
+  st.addEventListener('click',startGame);
+  try{ sheet.scrollIntoView({block:'nearest'}); }catch(e){}
+  try{ st.focus({preventScroll:true}); }catch(e){}
+}
+
 /* ---------- 효과음 (WebAudio로 합성, 파일 없음) ---------- */
 var SND_KEY='voca-crossword-sound-v1', sndOn=true, actx=null, master=null, noiseBuf=null;
 try{ if(localStorage.getItem(SND_KEY)==='off') sndOn=false; }catch(e){}
