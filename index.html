@@ -213,6 +213,31 @@ html:-webkit-full-screen .wrap{max-width:1500px}
 .banner.perfect .seg .off{fill:var(--hi)}
 .banner.repeat .seg .on{filter:none;opacity:.6}
 @media (max-width:640px){.clock{flex:1 1 auto;justify-items:center;gap:3px;padding:5px 12px 6px}.seg svg{height:28px}.banner{gap:8px 12px}}
+
+/* ===== 태블릿: 게임 화면을 위로, 뜻풀이는 퍼즐판 오른쪽 (세로·가로 모두) ===== */
+@media (pointer:coarse) and (min-width:600px), (min-width:640px) and (max-width:899px){
+  .wrap{gap:10px}
+  .top{display:contents}
+  .brand{order:0}
+  .stage{order:1}
+  .modes{order:2}
+  .panel{order:3}
+  .import{order:4}
+  .sub{display:none}
+  h1{font-size:clamp(14px,2.6vw,22px)}
+  .stage{grid-template-columns:minmax(0,1fr) clamp(210px,30vw,300px);gap:12px}
+  .board{padding:12px;gap:10px}
+  .clues{grid-template-columns:1fr;position:sticky;top:8px;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);overflow:auto;padding:12px}
+  .hud{flex:0 1 auto;margin-left:auto}
+  .tile{flex:0 1 auto}
+}
+
+/* ===== 단어 정답 · CORRECT! 토스트 ===== */
+.c.cur.ok{background:var(--hi)}
+.c.cur.ok .l{color:var(--on-hi)}
+.ctoast{position:fixed;z-index:55;transform:translate(-50%,-50%);padding:5px 13px;font:700 13px/1 var(--f-display);letter-spacing:.1em;color:#032214;background:linear-gradient(90deg,#1FD98A,#3DFFA2);border-radius:99px;box-shadow:0 0 18px rgba(61,255,162,.7);white-space:nowrap;pointer-events:none;animation:ctoastup 1.15s ease-out forwards}
+@keyframes ctoastup{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}18%{opacity:1;transform:translate(-50%,-70%) scale(1.08)}30%{transform:translate(-50%,-78%) scale(1)}100%{opacity:0;transform:translate(-50%,-190%) scale(1)}}
+@media (prefers-reduced-motion:reduce){.ctoast{animation:none;opacity:1}}
 </style>
 </head>
 <body>
@@ -623,12 +648,13 @@ function newPuzzle(){
     const first=S.puz.words.reduce((a,w,i)=>(w.num<S.puz.words[a].num||(w.num===S.puz.words[a].num&&w.dir<S.puz.words[a].dir))?i:a,0);
     selectWord(first,true);
     btn.disabled=false; btn.textContent='새 퍼즐 만들기';
+    if(TABLET.matches) window.scrollTo(0,0);
     if(S.puz.words.length<n) setMsg(n+'개 중 '+S.puz.words.length+'개만 배치됐어요. 한 번 더 만들면 더 채워질 수 있어요.');
     renderPool();
   },30);
 }
 function resetState(){
-  const P=S.puz;
+  const P=S.puz; S.right=new Set();
   S.ans=Array.from({length:P.H},()=>Array(P.W).fill(''));
   S.lock=Array.from({length:P.H},()=>Array(P.W).fill(false));
   S.mark=Array.from({length:P.H},()=>Array(P.W).fill(0));
@@ -658,7 +684,9 @@ function buildGrid(){
 function fit(){
   const P=S.puz; if(!P) return;
   const w=$('gscroll').clientWidth-2;
-  const cs=Math.max(22,Math.min(fsActive()?60:44,Math.floor(w/P.W)));
+  let cap=fsActive()?60:44;
+  if(TABLET.matches){ const vh=(window.visualViewport&&window.visualViewport.height)||window.innerHeight; cap=Math.min(cap,Math.floor((vh-TABLET_RESERVED)/P.H)); }
+  const cs=Math.max(22,Math.min(cap,Math.floor(w/P.W)));
   $('grid').style.setProperty('--cs',cs+'px');
 }
 function buildClues(){
@@ -688,12 +716,14 @@ function paint(){
   const act=new Set();
   if(ai>=0) cellsOf(ai).forEach(c=>act.add(c.y*100+c.x));
   let filled=0,total=0;
+  if(S.right) S.right=new Set([...S.right].filter(wordRight));
+  const rk=new Set(); if(S.right) S.right.forEach(i=>cellsOf(i).forEach(c=>rk.add(c.y*100+c.x)));
   for(let y=0;y<P.H;y++)for(let x=0;x<P.W;x++){
     const n=S.nodes[y][x]; if(!n) continue;
     total++;
     const ch=S.ans[y][x]; if(ch) filled++;
     n.l.textContent=ch.toUpperCase();
-    n.el.className='c'+(act.has(y*100+x)?' act':'')+((x===S.sel.x&&y===S.sel.y)?' cur':'')+(S.lock[y][x]?' lock':'')+(S.mark[y][x]?' bad':'')+(S.solved?' ok':'');
+    n.el.className='c'+(act.has(y*100+x)?' act':'')+((x===S.sel.x&&y===S.sel.y)?' cur':'')+(S.lock[y][x]?' lock':'')+(S.mark[y][x]?' bad':'')+((S.solved||(rk.has(y*100+x)&&!pend.has(y*100+x)))?' ok':'');
   }
   P.words.forEach((wd,i)=>{
     const b=S.clueEls[i]; if(!b) return;
@@ -763,7 +793,7 @@ function putLetter(ch){
   if(!S.lock[y][x]){ S.ans[y][x]=ch; S.mark[y][x]=0; }
   let moved=stepInWord(1);
   while(moved&&S.lock[S.sel.y][S.sel.x]&&stepInWord(1)){}
-  checkSolved(); paint();
+  const done=checkSolved(); const fresh=syncRight(); paint(); if(!done) celebrateWords(fresh);
 }
 function backspace(){
   if(!S.puz||S.solved||S.revealed) return;
@@ -841,8 +871,8 @@ function doLetter(){
   S.ans[t.y][t.x]=cellAt(t.x,t.y).ch; S.lock[t.y][t.x]=true; S.mark[t.y][t.x]=0;
   S.hints++; S.hintLeft--;
   startTimer();
-  if(!checkSolved()) setMsg('힌트를 썼어요. 남은 한글자 힌트 '+S.hintLeft+'번');
-  paint();
+  const done=checkSolved(); if(!done) setMsg('힌트를 썼어요. 남은 한글자 힌트 '+S.hintLeft+'번');
+  const fresh=syncRight(); paint(); if(!done) celebrateWords(fresh);
 }
 function doReset(){
   if(!S.puz) return;
@@ -934,6 +964,39 @@ function renderStats(bump){
   (bump||[]).forEach(id=>{ const el=$(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); });
 }
 
+/* ---------- 단어 정답 효과 (CORRECT! 토스트) ---------- */
+var pend=new Set(), celGen=0;
+function wordRight(i){ const P=S.puz; return !!P&&cellsOf(i).every(c=>S.ans[c.y][c.x]===cellAt(c.x,c.y).ch); }
+function syncRight(){
+  const P=S.puz, fresh=[]; if(!P||!S.right) return fresh;
+  P.words.forEach((wd,i)=>{ if(!S.right.has(i)&&wordRight(i)){ S.right.add(i); fresh.push(i); } });
+  return fresh;
+}
+function celebrateWords(fresh){
+  if(!fresh.length||RM||!S.puz) return;
+  const gen=celGen, grid=$('grid'), cs=parseFloat(getComputedStyle(grid).getPropertyValue('--cs'))||36;
+  fresh.forEach((i,n)=>{
+    const list=cellsOf(i);
+    list.forEach((c,k)=>{ pend.add(c.y*100+c.x); });
+    list.forEach((c,k)=>setTimeout(()=>{
+      if(gen!==celGen) return;
+      pend.delete(c.y*100+c.x); paint();
+      const nd=S.nodes[c.y]&&S.nodes[c.y][c.x]; if(!nd||!nd.el.animate) return; const el=nd.el;
+      el.style.zIndex=3; setTimeout(()=>{ el.style.zIndex=''; },750);
+      el.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY('+(-Math.round(cs*.22))+'px) scale(1.14)',offset:.4},{transform:'translateY(0) scale(1)'}],{duration:500,easing:'ease'});
+      el.animate([{boxShadow:'0 0 0 rgba(61,255,162,0)'},{boxShadow:'0 0 18px 3px rgba(61,255,162,.9)',offset:.35},{boxShadow:'0 0 0 rgba(61,255,162,0)'}],{duration:700});
+    },n*220+k*70));
+    setTimeout(()=>{
+      if(gen!==celGen) return;
+      let l=1e9,r=-1e9,t=1e9;
+      list.forEach(c=>{ const nd=S.nodes[c.y][c.x]; if(!nd) return; const b=nd.el.getBoundingClientRect(); l=Math.min(l,b.left); r=Math.max(r,b.right); t=Math.min(t,b.top); });
+      if(l>r) return;
+      const e=document.createElement('div'); e.className='ctoast'; e.textContent='✓ CORRECT!'; e.setAttribute('aria-hidden','true');
+      e.style.left=Math.max(70,Math.min(innerWidth-70,(l+r)/2))+'px'; e.style.top=Math.max(40,t-6)+'px';
+      document.body.appendChild(e); setTimeout(()=>e.remove(),1300);
+    },n*220+list.length*35);
+  });
+}
 /* ---------- 완료 이펙트 · 디지털 시계 ---------- */
 var celTimer=0, segRaf=0;
 const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -1000,7 +1063,7 @@ function fxStars(fx,x,y,n,sp,cols,size){ for(let i=0;i<n;i++){ const a=fxR(0,6.2
 function fxComplete(x,y){ const fx=fxGet(); fxRing(fx,x,y,54,FXC[0],0,40,3); fxRing(fx,x,y,84,FXC[2],7,46,3); fxRing(fx,x,y,112,FXC[1],14,52,2); fxStars(fx,x,y,9,5,FXC,8); }
 function fxPerfect(x,y){ const fx=fxGet(); fxRing(fx,x,y,70,FXG[0],0,44,5); fxRing(fx,x,y,110,FXG[1],6,52,4); fxRing(fx,x,y,150,FXG[2],12,58,3); fxRing(fx,x,y,190,FXG[3],18,64,2);
   fx.add(fxBase({t:'rays',x,y,n:16,a0:fxR(0,1),r0:14,r1:120,col:FXG[0],life:46})); fxStars(fx,x,y,18,8,FXG,12); }
-function cancelCelebrate(){ clearTimeout(celTimer); cancelAnimationFrame(segRaf); if(fxEngine) fxEngine.clear(); const i=document.querySelector('#banner .bicon'); if(i) i.classList.remove('hold','show'); }
+function cancelCelebrate(){ celGen++; pend.clear(); clearTimeout(celTimer); cancelAnimationFrame(segRaf); if(fxEngine) fxEngine.clear(); const i=document.querySelector('#banner .bicon'); if(i) i.classList.remove('hold','show'); }
 function celebrate(kind,sec){
   cancelCelebrate();
   showClock(sec,kind!=='repeat');
@@ -1020,6 +1083,16 @@ function celebrate(kind,sec){
     },520);
   });
 }
+
+/* ---------- 태블릿 배치 ---------- */
+const TABLET=window.matchMedia('(pointer:coarse) and (min-width:600px), (min-width:640px) and (max-width:899px)');
+const TABLET_RESERVED=250; /* 제목줄 + 현재 뜻풀이 + 도구줄 + 여백 */
+(function(){
+  const refit=()=>{ if(TABLET.matches) fit(); };
+  window.addEventListener('resize',refit);
+  if(window.visualViewport) window.visualViewport.addEventListener('resize',refit);
+  if(TABLET.addEventListener) TABLET.addEventListener('change',fit);
+})();
 
 /* ---------- fullscreen ---------- */
 function fsActive(){ return !!(document.fullscreenElement||document.webkitFullscreenElement); }
