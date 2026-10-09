@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luke의 VOCA Cross word</title>
+<meta name="description" content="외운 영어 단어로 가로세로 크로스워드를 만들어 푸는 단어 학습 웹앱">
+<meta name="theme-color" content="#050816">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Cdefs%3E%3ClinearGradient id=%22gRim%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFF3A3%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23FFCB1F%22/%3E%3Cstop offset=%221%22 stop-color=%22%23B77400%22/%3E%3C/linearGradient%3E%3CradialGradient id=%22gFace%22 cx=%22.35%22 cy=%22.3%22 r=%22.9%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFF9C9%22/%3E%3Cstop offset=%22.55%22 stop-color=%22%23FFE600%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F0B400%22/%3E%3C/radialGradient%3E%3ClinearGradient id=%22gRib%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2363F2FF%22/%3E%3Cstop offset=%221%22 stop-color=%22%230FA6C6%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22gRibB%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%232FD3EC%22/%3E%3Cstop offset=%221%22 stop-color=%22%230A7E9E%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23050816%22/%3E%3Cpolygon points=%228%2C1 14.2%2C1 22%2C17.5 16%2C17.5%22 fill=%22url%28%23gRib%29%22/%3E%3Cpolygon points=%2224%2C1 17.8%2C1 10%2C17.5 16%2C17.5%22 fill=%22url%28%23gRibB%29%22/%3E%3Cpath d=%22M14.2 1 22 17.5M17.8 1 10 17.5%22 stroke=%22%230A4E66%22 stroke-opacity=%22.5%22 stroke-width=%22.6%22 fill=%22none%22/%3E%3Ccircle cx=%2216%22 cy=%2221%22 r=%2210.2%22 fill=%22url%28%23gRim%29%22/%3E%3Ccircle cx=%2216%22 cy=%2221%22 r=%229.1%22 fill=%22none%22 stroke=%22%23FFF6B0%22 stroke-opacity=%22.75%22 stroke-width=%22.6%22/%3E%3Ccircle cx=%2216%22 cy=%2221%22 r=%227.9%22 fill=%22url%28%23gFace%29%22 stroke=%22%23B87A00%22 stroke-width=%22.7%22/%3E%3Cpolygon points=%2216%2C16.1 17.35%2C19.44 20.95%2C19.69 18.19%2C22.01 19.06%2C25.51 16%2C23.6 12.94%2C25.51 13.81%2C22.01 11.05%2C19.69 14.65%2C19.44%22 fill=%22%237A4B00%22 stroke=%22%23FFE98A%22 stroke-width=%22.5%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M8.8 19A7.8 7.8 0 0 1 17 13.4%22 fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.7%22 stroke-width=%221%22 stroke-linecap=%22round%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Syncopate:wght@400;700&family=Share+Tech+Mono&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: quadrille-paper puzzle board on the left, clue lists on the right; one column on phones.
+   Palette: midnight navy, cyan neon for the active word, electric yellow for the current cell. */
+:root{
+  --bg:#050816; --paper:rgba(9,15,40,.74); --ink:#E6F3FF; --ink-2:#8AA0CC; --line:#1C3F78; --grid:rgba(34,228,255,.12);
+  --cell:#0A1233; --cell-line:#2D6BB3; --accent:#22E4FF; --accent-ink:#031018; --accent-soft:#0D3A5E;
+  --hi:#FFE600; --on-hi:#1A1500; --good:#3DFFA2; --good-soft:#0C4A3A; --bad:#FF6384; --bad-soft:#4A1530;
+  --f-display:'Orbitron','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --f-body:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  --f-mono:'Share Tech Mono','JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --page-img:radial-gradient(60% 45% at 12% 0%,rgba(34,228,255,.26),transparent 70%),radial-gradient(50% 40% at 100% 8%,rgba(255,230,0,.18),transparent 70%),linear-gradient(rgba(34,228,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(34,228,255,.07) 1px,transparent 1px);
+  --page-size:auto,auto,44px 44px,44px 44px;
+  --board-img:linear-gradient(rgba(34,228,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(34,228,255,.14) 1px,transparent 1px);
+  --board-size:24px 24px;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--f-body);padding-inline:16px;padding-block:20px 48px;margin:0;background-image:var(--page-img);background-size:var(--page-size);background-attachment:fixed}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;position:relative;z-index:1}
+button,select,textarea,input{font-family:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* header + mode tabs */
+.top{display:grid;gap:14px}
+h1{font:400 clamp(26px,5vw,34px)/1.15 var(--f-display);margin:0;letter-spacing:-.01em}
+.sub{margin:4px 0 0;color:var(--ink-2);font-size:14px}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mode{display:grid;gap:1px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;min-width:0}
+.mode b{font:400 18px/1.2 var(--f-display)}
+.mode small{font-size:12px;color:var(--ink-2)}
+.mode[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.mode[aria-selected="true"] small{color:var(--bg);opacity:.75}
+
+/* settings */
+.panel{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.field{display:grid;gap:4px;min-width:0}
+.field>span,.field>legend{font-size:12px;color:var(--ink-2);letter-spacing:.02em}
+.range{display:flex;align-items:center;gap:8px}
+.range i{font-style:normal;color:var(--ink-2)}
+select{font:500 14px var(--f-body);padding:8px 10px;min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);max-width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 14px var(--f-body);padding:8px 12px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.toggle{display:flex;align-items:center;gap:8px;min-height:40px;font-size:14px;cursor:pointer}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+.btn{font:600 14px var(--f-body);padding:9px 14px;min-height:40px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--cell-line)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn:disabled{opacity:.6;cursor:default}
+.pool{flex-basis:100%;margin:0;font-size:13px;color:var(--ink-2)}
+
+/* stage */
+.stage{display:grid;gap:16px;align-items:start}
+@media (min-width:900px){.stage{grid-template-columns:minmax(0,1fr) 340px}}
+.board{display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--paper);
+  background-image:var(--board-img);background-size:var(--board-size)}
+.now{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--accent);color:var(--accent-ink);min-height:48px}
+.now .badge{font:700 13px var(--f-mono);padding:3px 8px;border-radius:7px;background:var(--accent-ink);color:var(--accent)}
+.now .txt{font:400 20px/1.25 var(--f-display);min-width:0;overflow-wrap:anywhere}
+.now .len{margin-left:auto;font:600 12px var(--f-mono);opacity:.85}
+.gscroll{overflow-x:auto;padding-block:2px}
+.gridwrap{position:relative;width:max-content;margin-inline:auto}
+.grid{display:grid;grid-template-columns:repeat(var(--cols,10),var(--cs,36px));grid-auto-rows:var(--cs,36px);padding:0 1px 1px 0}
+.v{display:block}
+.c{position:relative;width:calc(var(--cs) + 1px);height:calc(var(--cs) + 1px);margin:0 -1px -1px 0;border:1px solid var(--cell-line);background:var(--cell);display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.c .n{position:absolute;top:1px;left:2px;font:700 max(8px,calc(var(--cs) * .27))/1 var(--f-mono);color:var(--ink-2);pointer-events:none}
+.c .l{font:700 calc(var(--cs) * .54)/1 var(--f-mono);color:var(--ink);pointer-events:none}
+.c.act{background:var(--accent-soft)}
+.c.cur{background:var(--hi);z-index:2;box-shadow:0 0 0 2px var(--ink)}
+.c.cur .l,.c.cur .n{color:var(--on-hi)}
+.c.lock .l{color:var(--accent)}
+.c.cur.lock .l{color:var(--on-hi)}
+.c.bad{background:var(--bad-soft)}
+.c.bad .l{color:var(--bad)}
+.c.ok{background:var(--good-soft)}
+.c.ok .l{color:var(--good)}
+#kb{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px;pointer-events:none}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stat{margin-left:auto;font:600 13px var(--f-mono);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.msg{margin:0;min-height:1.5em;font-size:14px;color:var(--ink-2)}
+.banner{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 14px;border-radius:12px;background:var(--good-soft);color:var(--ink)}
+.banner b{font:400 20px var(--f-display);color:var(--good)}
+.hint-kb{margin:0;font-size:12px;color:var(--ink-2)}
+
+/* clues */
+.clues{display:grid;gap:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+@media (min-width:560px) and (max-width:899px){.clues{grid-template-columns:1fr 1fr}}
+@media (min-width:900px){.clues{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}}
+.clues h2{margin:0 0 6px;font:400 18px var(--f-display);display:flex;align-items:baseline;gap:8px}
+.clues h2 small{font:600 12px var(--f-mono);color:var(--ink-2)}
+.clues ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.clue{display:grid;grid-template-columns:2em minmax(0,1fr) auto;gap:6px;align-items:baseline;width:100%;text-align:left;padding:7px 8px;border:0;border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;font-size:14px}
+.clue:hover{background:var(--bg)}
+.clue .cn{font:700 12px var(--f-mono);color:var(--ink-2)}
+.clue .ck{overflow-wrap:anywhere}
+.clue .cl{font:600 11px var(--f-mono);color:var(--ink-2)}
+.clue.act{background:var(--accent-soft)}
+.clue.done .ck{color:var(--ink-2)}
+.clue.done .cl::before{content:"✓ "}
+
+/* import */
+.import{border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.import summary{padding:14px;cursor:pointer;font-weight:700}
+.import .in{display:grid;gap:10px;padding:0 14px 14px}
+.import p{margin:0;font-size:13px;color:var(--ink-2)}
+.import code{font:500 12px var(--f-mono);background:var(--bg);padding:1px 5px;border-radius:5px}
+textarea{width:100%;min-height:150px;resize:vertical;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--f-mono)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input[type=file]{font-size:13px;max-width:100%;color:var(--ink-2)}
+
+@media (prefers-reduced-motion:no-preference){.c{transition:background-color .12s}}
+
+/* ===== 네온 옐로 ===== */
+[hidden]{display:none!important}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 1px,transparent 1px 3px)}
+:is(.panel,.board,.clues,.import,.mode,.btn,.chip,select,textarea,.now,.banner,.clue){border-radius:3px}
+:is(.panel,.clues,.import,.mode){backdrop-filter:blur(6px)}
+h1{font-weight:700;letter-spacing:.04em;display:inline-block;background:linear-gradient(90deg,#22E4FF,#FFE600);-webkit-background-clip:text;background-clip:text;color:transparent}
+.board{border-color:#1F5C9E;box-shadow:0 0 0 1px rgba(34,228,255,.18),0 0 48px rgba(34,228,255,.1) inset,0 0 32px rgba(34,228,255,.12)}
+.mode[aria-selected="true"]{background:rgba(34,228,255,.16);border-color:#22E4FF;color:var(--ink);box-shadow:0 0 16px rgba(34,228,255,.35)}
+.mode[aria-selected="true"] small{color:var(--ink-2);opacity:1}
+.now{background:linear-gradient(90deg,#22E4FF,#6DF3FF);box-shadow:0 0 22px rgba(34,228,255,.5)}
+.now .badge{background:#031018;color:#22E4FF}
+.now .txt{font-weight:700}
+.c .l{text-shadow:0 0 7px currentColor}
+.c.cur{box-shadow:0 0 0 2px #fff,0 0 16px 3px rgba(255,230,0,.75)}
+.c.cur .l{text-shadow:none}
+.btn{background:rgba(34,228,255,.06);border-color:#2A5DA0;color:var(--ink)}
+.btn:hover{border-color:var(--accent);box-shadow:0 0 12px rgba(34,228,255,.35)}
+.btn.pri{background:linear-gradient(90deg,#22E4FF,#3A8DFF);color:var(--accent-ink);border-color:transparent;box-shadow:0 0 18px rgba(34,228,255,.45)}
+.panel>.field{max-width:100%;grid-template-columns:minmax(0,1fr)}
+.range{max-width:100%}
+.range select{flex:1 1 0;min-width:0;text-overflow:ellipsis}
+@media (max-width:899px){.stage{grid-template-columns:minmax(0,1fr)}}
+
+/* ===== 타이틀 · 전체화면 · 힌트 ===== */
+.brand{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.bt{min-width:0;display:grid;gap:8px}
+h1{display:block;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--ink);font:400 clamp(15px,3.9vw,28px)/1.25 'Syncopate','Orbitron','Noto Sans KR',sans-serif;letter-spacing:.12em;text-transform:uppercase}
+h1 .lk{font:500 .66em/1 var(--f-body);letter-spacing:.02em;text-transform:none;color:var(--ink-2);margin-right:.3em}
+h1 .vc{font-weight:700;letter-spacing:.16em;background:linear-gradient(90deg,#22E4FF,#FFE600);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .cw{font-weight:400;color:var(--ink)}
+.sub{margin:0}
+.fsbtn{display:inline-flex;align-items:center;gap:8px;flex:none}
+@media (max-width:520px){#fsLabel{display:none}.fsbtn{padding-inline:11px}}
+.pips{font-size:11px;letter-spacing:.18em;color:var(--hi);margin-left:4px}
+.btn:disabled{cursor:not-allowed}
+body.focus .top .modes,body.focus .sub,body.focus .panel,body.focus .import{display:none}
+html:fullscreen .wrap{max-width:1500px}
+html:-webkit-full-screen .wrap{max-width:1500px}
+
+/* ===== Complete · Perfect ===== */
+.ic{display:block;width:24px;height:24px;flex:none}
+.brand{flex-wrap:wrap;align-items:center}
+.bt{flex:1 1 300px}
+.hud{display:flex;align-items:stretch;gap:10px;margin-left:auto}
+.tile{display:flex;align-items:center;gap:10px;padding:7px 16px 7px 11px;border:1px solid #2A5DA0;background:rgba(34,228,255,.06);border-radius:3px;min-width:0}
+.tile .ic{width:28px;height:28px;color:var(--accent)}
+.tile .tx{display:grid;gap:5px;line-height:1}
+.tile .lbl{font:600 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.tile b{font:700 22px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink);transform-origin:left center}
+.tile.perfect{border-color:#8A7D12;background:rgba(255,230,0,.07);box-shadow:0 0 18px rgba(255,230,0,.12)}
+.tile.perfect .lbl{color:#E6D45C}
+.tile.perfect b{color:var(--hi);text-shadow:0 0 10px rgba(255,230,0,.55)}
+.tile.perfect .ic{filter:drop-shadow(0 0 6px rgba(255,230,0,.65))}
+.banner .ic{width:40px;height:40px;color:var(--good)}
+.bmsg{display:grid;gap:2px;min-width:0;flex:1 1 200px}
+.banner.perfect{background:#2A2400;border:1px solid #8A7D12;box-shadow:0 0 24px rgba(255,230,0,.18)}
+.banner.perfect b{color:var(--hi);text-shadow:0 0 12px rgba(255,230,0,.6);letter-spacing:.08em}
+.banner.perfect .ic{width:48px;height:48px;filter:drop-shadow(0 0 8px rgba(255,230,0,.7))}
+@media (prefers-reduced-motion:no-preference){
+  .tile.bump b{animation:bump .7s ease}
+  .tile.perfect.bump .ic{animation:spark .9s ease}
+}
+@keyframes bump{0%{transform:scale(1)}30%{transform:scale(1.4)}100%{transform:scale(1)}}
+@keyframes spark{0%{transform:rotate(0) scale(1)}40%{transform:rotate(-12deg) scale(1.25)}100%{transform:rotate(0) scale(1)}}
+@media (max-width:640px){.hud{flex:1 1 100%;margin-left:0}.tile{flex:1 1 0}}
+
+/* ===== 완료 이펙트 · 디지털 시계 ===== */
+#fxc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
+#fxflash{position:fixed;inset:0;pointer-events:none;z-index:59;opacity:0;background:radial-gradient(circle at var(--fx,50% 50%),rgba(255,244,170,.5),rgba(255,230,0,.14) 38%,transparent 68%)}
+#fxflash.on{animation:fxflash .6s ease-out}
+@keyframes fxflash{0%{opacity:1}100%{opacity:0}}
+.banner .bicon.hold{transform:scale(0);opacity:0}
+.banner .bicon.show{animation:medalpop .7s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes medalpop{0%{transform:scale(0) rotate(-40deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.tile.perfect.glow{animation:tileglow 1s ease}
+@keyframes tileglow{0%{box-shadow:0 0 0 rgba(255,230,0,0)}30%{box-shadow:0 0 28px rgba(255,230,0,.85)}100%{box-shadow:0 0 18px rgba(255,230,0,.12)}}
+.clock{margin-left:auto;display:grid;gap:5px;justify-items:end;padding:7px 14px 8px;background:#02070F;border:1px solid #1C4F78;border-radius:3px;box-shadow:inset 0 0 14px rgba(34,228,255,.1),0 0 16px rgba(34,228,255,.1)}
+.clbl{font:600 9px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2)}
+.seg{display:block;line-height:0}
+.seg svg{display:block;height:38px;width:auto;overflow:visible}
+.seg .off{fill:#22E4FF;opacity:.09}
+.seg .on{fill:var(--cy,#22E4FF);filter:drop-shadow(0 0 4px rgba(34,228,255,.9)) drop-shadow(0 0 10px rgba(34,228,255,.5))}
+.banner .seg .on{fill:var(--good);filter:drop-shadow(0 0 4px rgba(61,255,162,.9)) drop-shadow(0 0 10px rgba(61,255,162,.5))}
+.banner .seg .off{fill:var(--good)}
+.banner.perfect .clock{border-color:#8A7D12;box-shadow:inset 0 0 14px rgba(255,230,0,.1),0 0 18px rgba(255,230,0,.18)}
+.banner.perfect .clbl{color:#E6D45C}
+.banner.perfect .seg .on{fill:var(--hi);filter:drop-shadow(0 0 4px rgba(255,230,0,.95)) drop-shadow(0 0 12px rgba(255,230,0,.6))}
+.banner.perfect .seg .off{fill:var(--hi)}
+.banner.repeat .seg .on{filter:none;opacity:.6}
+@media (max-width:640px){.clock{flex:1 1 auto;justify-items:center;gap:3px;padding:5px 12px 6px}.seg svg{height:28px}.banner{gap:8px 12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <canvas id="fxc" aria-hidden="true"></canvas><div id="fxflash" aria-hidden="true"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="gRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3A3"/><stop offset=".5" stop-color="#FFCB1F"/><stop offset="1" stop-color="#B77400"/></linearGradient>
+      <radialGradient id="gFace" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#FFF9C9"/><stop offset=".55" stop-color="#FFE600"/><stop offset="1" stop-color="#F0B400"/></radialGradient>
+      <linearGradient id="gRib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63F2FF"/><stop offset="1" stop-color="#0FA6C6"/></linearGradient>
+      <linearGradient id="gRibB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2FD3EC"/><stop offset="1" stop-color="#0A7E9E"/></linearGradient>
+      <symbol id="i-medal" viewBox="0 0 32 32"><polygon points="8,1 14.2,1 22,17.5 16,17.5" fill="url(#gRib)"/><polygon points="24,1 17.8,1 10,17.5 16,17.5" fill="url(#gRibB)"/><path d="M14.2 1 22 17.5M17.8 1 10 17.5" stroke="#0A4E66" stroke-opacity=".5" stroke-width=".6" fill="none"/><circle cx="16" cy="21" r="10.2" fill="url(#gRim)"/><circle cx="16" cy="21" r="9.1" fill="none" stroke="#FFF6B0" stroke-opacity=".75" stroke-width=".6"/><circle cx="16" cy="21" r="7.9" fill="url(#gFace)" stroke="#B87A00" stroke-width=".7"/><polygon points="16,16.1 17.35,19.44 20.95,19.69 18.19,22.01 19.06,25.51 16,23.6 12.94,25.51 13.81,22.01 11.05,19.69 14.65,19.44" fill="#7A4B00" stroke="#FFE98A" stroke-width=".5" stroke-linejoin="round"/><path d="M8.8 19A7.8 7.8 0 0 1 17 13.4" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1" stroke-linecap="round"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M7.6 12.4l3.1 3.1 5.8-6.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+    </defs>
+  </svg>
+  <header class="top">
+    <div class="brand">
+      <div class="bt">
+        <h1 aria-label="Luke의 VOCA Cross word"><span class="lk">Luke의</span> <span class="vc">VOCA</span> <span class="cw">Cross word</span></h1>
+        <p class="sub">외운 단어로 가로세로 퍼즐을 만들고, 한글 뜻을 보고 영어 단어를 채워요.</p>
+      </div>
+      <div class="hud">
+        <div class="tile" id="tileComplete" role="group" aria-label="Complete 횟수" title="퍼즐을 완성한 횟수">
+          <svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>
+          <span class="tx"><span class="lbl">Complete</span><b id="cntComplete">0</b></span>
+        </div>
+        <div class="tile perfect" id="tilePerfect" role="group" aria-label="Perfect 횟수" title="한글자 힌트와 첫 글자 보여주기 없이 완성한 횟수">
+          <svg class="ic" aria-hidden="true"><use href="#i-medal"/></svg>
+          <span class="tx"><span class="lbl">Perfect</span><b id="cntPerfect">0</b></span>
+        </div>
+      <button class="btn fsbtn" id="fsBtn" type="button" aria-pressed="false" aria-label="전체화면">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        <span id="fsLabel">전체화면</span>
+      </button>
+      </div>
+    </div>
+    <div class="modes" role="tablist" aria-label="단어장 선택" id="modes"></div>
+  </header>
+
+  <section class="panel" aria-label="출제 설정">
+    <div class="field" id="secField" hidden>
+      <span>권</span>
+      <div class="chips" id="secChips"></div>
+    </div>
+    <div class="field">
+      <span id="rangeLabel">출제 범위</span>
+      <div class="range">
+        <select id="dayFrom" aria-label="시작 Day"></select><i>~</i><select id="dayTo" aria-label="끝 Day"></select>
+      </div>
+    </div>
+    <div class="field">
+      <span>단어 수</span>
+      <select id="count" aria-label="퍼즐 단어 수"></select>
+    </div>
+    <label class="toggle"><input type="checkbox" id="first"> 첫 글자 보여주기</label>
+    <button class="btn pri" id="newBtn" type="button">새 퍼즐 만들기</button>
+    <p class="pool" id="pool"></p>
+  </section>
+
+  <div class="stage">
+    <section class="board" aria-label="크로스워드">
+      <div class="now" id="now" aria-live="polite"></div>
+      <div class="gscroll" id="gscroll">
+        <div class="gridwrap" id="gridwrap">
+          <div class="grid" id="grid" role="application" aria-label="크로스워드 격자. 영어 글자를 입력하세요"></div>
+          <input id="kb" type="text" value=" " autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" aria-label="영문 글자 입력">
+        </div>
+      </div>
+      <div class="bar">
+        <button class="btn" id="letterBtn" type="button">한글자 힌트 <span class="pips" id="pips" aria-hidden="true">●●●</span></button>
+        <button class="btn" id="resetBtn" type="button">처음부터</button>
+        <span class="stat" id="stat"></span>
+        <button class="btn pri" id="checkBtn" type="button">확인</button>
+      </div>
+      <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      <div class="banner" id="banner" hidden>
+        <svg class="ic bicon" aria-hidden="true"><use id="bannerUse" href="#i-check"/></svg><span class="bmsg"><b id="bannerTitle"></b><span id="bannerText"></span></span>
+        <div class="clock" id="clock" role="img" aria-label="걸린 시간"><span class="clbl">Clear time</span><span class="seg" id="segTime" aria-hidden="true"></span></div>
+      </div>
+      <p class="hint-kb">칸을 누르고 영어로 입력해요. 같은 칸을 다시 누르거나 스페이스를 누르면 가로/세로가 바뀌어요. 한글 입력기가 켜져 있으면 영문으로 바꿔 주세요. Complete는 퍼즐을 완성한 횟수, Perfect는 한글자 힌트와 첫 글자 보여주기 없이 완성한 횟수예요.</p>
+    </section>
+
+    <aside class="clues" aria-label="뜻풀이">
+      <div><h2>가로 <small id="aCount"></small></h2><ol id="across"></ol></div>
+      <div><h2>세로 <small id="dCount"></small></h2><ol id="down"></ol></div>
+    </aside>
+  </div>
+
+  <details class="import" id="import">
+    <summary>단어장 불러오기</summary>
+    <div class="in">
+      <p id="importFor"></p>
+      <p>한 줄에 단어 하나씩 붙여넣어요. <code>apple 사과</code> · <code>apple,사과</code> · 탭으로 구분한 표 모두 읽어요. 앞의 번호는 무시하고, 순서대로 묶여요(초등·2CC 20단어, 중등 60단어씩). 공백이나 하이픈이 든 표현은 퍼즐에서 빠져요.</p>
+      <textarea id="paste" placeholder="apple 사과&#10;banana 바나나&#10;school 학교" spellcheck="false"></textarea>
+      <div class="row">
+        <button class="btn pri" id="applyBtn" type="button">이 단어장에 적용</button>
+        <button class="btn" id="sampleBtn" type="button">기본 단어장으로 되돌리기</button>
+        <input type="file" id="file" accept=".txt,.csv,.tsv,text/plain,text/csv" aria-label="단어 파일 선택">
+      </div>
+      <p id="importMsg" role="status" aria-live="polite"></p>
+      <p>불러온 단어장은 이 브라우저에만 저장돼요. 다른 기기에서는 다시 불러와야 해요.</p>
+    </div>
+  </details>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// ENGINE-START
+const DAY = 20;
+const K = (x,y)=>(x+200)*1000+(y+200);
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+
+function mk(w,k){
+  const lw=String(w).toLowerCase().replace(/\u2019/g,"'").trim();
+  return { w:lw, k:String(k||'').trim(), ok:/^[a-z]{3,15}$/.test(lw) };
+}
+
+function parseLine(raw){
+  let line=String(raw).replace(/\uFEFF/g,'').replace(/"/g,'').trim();
+  if(!line) return null;
+  line=line.replace(/^\s*\d+\s*(?:[.)\]:]\s*|\s+(?=[A-Za-z]))/,'');
+  let en='',ko='',m;
+  if(line.indexOf('\t')>-1){
+    const parts=line.split('\t').map(s=>s.trim()).filter(Boolean);
+    if(parts.length&&/^\d+$/.test(parts[0])) parts.shift();
+    if(parts.length<2) return null;
+    en=parts[0]; ko=parts.slice(1).join(' ');
+  } else if((m=line.match(/^([A-Za-z][A-Za-z'\u2019\- ]*?)\s*[,;|:]\s*(.+)$/))){
+    en=m[1]; ko=m[2];
+  } else if((m=line.match(/^([A-Za-z][A-Za-z'\u2019\- ]*?)\s+(?=[^A-Za-z\s'\u2019\-])(.+)$/))){
+    en=m[1]; ko=m[2];
+  } else return null;
+  en=en.replace(/[\s\-\u2013:=]+$/,'');
+  ko=ko.replace(/^[\s\-\u2013:=]+/,'').trim();
+  if(!en||!ko||!/^[A-Za-z]/.test(en)) return null;
+  return {en,ko};
+}
+
+function parseText(text,keepDup){
+  const out=[]; const seen=new Set(); let skipped=0; let first=true;
+  String(text).split(/\r?\n/).forEach(line=>{
+    if(!line.trim()) return;
+    if(first){ first=false; if(/^\s*(word|words|english|\uB2E8\uC5B4|\uC601\uB2E8\uC5B4)\b/i.test(line)) return; }
+    const p=parseLine(line);
+    if(!p){ skipped++; return; }
+    const e=mk(p.en,p.ko);
+    if(seen.has(e.w)){ skipped++; if(!keepDup) return; e.ok=false; }
+    seen.add(e.w); out.push(e);
+  });
+  return {entries:out, skipped};
+}
+
+function attempt(primary, extra, n, maxDim){
+  const grid=new Map(); const placed=[];
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity,cross=0;
+
+  function canPlace(w,x,y,dir){
+    const dx=dir===0?1:0, dy=dir===0?0:1, len=w.length;
+    if(grid.has(K(x-dx,y-dy))||grid.has(K(x+dx*len,y+dy*len))) return -1;
+    let cr=0;
+    for(let i=0;i<len;i++){
+      const cx=x+dx*i, cy=y+dy*i, c=grid.get(K(cx,cy));
+      if(c){ if(c.ch!==w[i]||c.d[dir]!==-1) return -1; cr++; }
+      else if(grid.has(K(cx+dy,cy+dx))||grid.has(K(cx-dy,cy-dx))) return -1;
+    }
+    return cr;
+  }
+  function place(e,x,y,dir){
+    const dx=dir===0?1:0, dy=dir===0?0:1, idx=placed.length;
+    for(let i=0;i<e.w.length;i++){
+      const cx=x+dx*i, cy=y+dy*i, k=K(cx,cy), c=grid.get(k);
+      if(c){ c.d[dir]=idx; cross++; }
+      else grid.set(k,{ch:e.w[i], d: dir===0?[idx,-1]:[-1,idx]});
+    }
+    placed.push({e,x,y,dir});
+    minX=Math.min(minX,x); minY=Math.min(minY,y);
+    maxX=Math.max(maxX,x+dx*(e.w.length-1)); maxY=Math.max(maxY,y+dy*(e.w.length-1));
+  }
+  function tryPlace(e){
+    const w=e.w; let best=null, bestS=-1e9; const seen=new Set();
+    for(const [k,c] of grid){
+      const cx=Math.floor(k/1000)-200, cy=(k%1000)-200;
+      for(let dir=0;dir<2;dir++){
+        if(c.d[dir]!==-1) continue;
+        const dx=dir===0?1:0, dy=dir===0?0:1;
+        for(let i=0;i<w.length;i++){
+          if(w[i]!==c.ch) continue;
+          const x=cx-dx*i, y=cy-dy*i, sk=K(x,y)*2+dir;
+          if(seen.has(sk)) continue; seen.add(sk);
+          const cr=canPlace(w,x,y,dir);
+          if(cr<1) continue;
+          const W=Math.max(maxX,x+dx*(w.length-1))-Math.min(minX,x)+1;
+          const H=Math.max(maxY,y+dy*(w.length-1))-Math.min(minY,y)+1;
+          if(W>maxDim||H>maxDim) continue;
+          const s=cr*8-W*H*0.35-Math.abs(W-H)*1.5+Math.random()*4;
+          if(s>bestS){ bestS=s; best={x,y,dir}; }
+        }
+      }
+    }
+    if(!best) return false;
+    place(e,best.x,best.y,best.dir); return true;
+  }
+
+  const order=primary.map(e=>({e,r:e.w.length+Math.random()*3})).sort((a,b)=>b.r-a.r).map(o=>o.e);
+  const left=[];
+  order.forEach((e,i)=>{ if(i===0) place(e,0,0,0); else if(!tryPlace(e)) left.push(e); });
+  for(let pass=0;pass<2&&left.length;pass++){
+    for(let j=left.length-1;j>=0;j--){ if(tryPlace(left[j])) left.splice(j,1); }
+  }
+  for(const e of extra){ if(placed.length>=n) break; tryPlace(e); }
+  return {placed, cross, w:maxX-minX+1, h:maxY-minY+1, minX, minY};
+}
+
+function buildPuzzle(primary, extra, n, maxDim, budget){
+  let best=null, bestScore=-1e9, tries=0; const t0=performance.now();
+  maxDim=Math.max(maxDim,...primary.map(e=>e.w.length));
+  do{
+    const r=attempt(primary,extra,n,maxDim); tries++;
+    const sc=Math.min(r.placed.length,n)*1000+r.cross*15-r.w*r.h*0.6-Math.abs(r.w-r.h)*3;
+    if(sc>bestScore){ best=r; bestScore=sc; }
+  } while(performance.now()-t0<budget && tries<400);
+  best.tries=tries;
+  return best;
+}
+
+function finalize(r){
+  const words=r.placed.map(p=>({w:p.e.w,k:p.e.k,x:p.x-r.minX,y:p.y-r.minY,dir:p.dir,num:0}));
+  const W=r.w, H=r.h;
+  const cells=Array.from({length:H},()=>Array(W).fill(null));
+  words.forEach((wd,i)=>{
+    for(let j=0;j<wd.w.length;j++){
+      const x=wd.x+(wd.dir===0?j:0), y=wd.y+(wd.dir===1?j:0);
+      const c=cells[y][x]||(cells[y][x]={ch:wd.w[j],d:[-1,-1],num:0});
+      c.d[wd.dir]=i;
+    }
+  });
+  const starts=words.map((wd,i)=>({i,x:wd.x,y:wd.y})).sort((a,b)=>a.y-b.y||a.x-b.x);
+  let n=0; const numAt=new Map();
+  starts.forEach(s=>{ const k=s.y*100+s.x; if(!numAt.has(k)) numAt.set(k,++n); words[s.i].num=numAt.get(k); });
+  words.forEach(wd=>{ cells[wd.y][wd.x].num=wd.num; });
+  return {W,H,cells,words};
+}
+// ENGINE-END
+
+/* ---------- 기본 단어장 (업로드한 파일에서 추출) ---------- */
+const DATA = {
+elem:"a (an)\t하나의, 한\nabout\t~에 대하여, 대략\nabove\t~위에\nacross\t~을 지나서, 건너서\nact\t행동하다, 연기하다\nactor\t배우\naddress\t주소\nafraid\t두려워하는\nafter\t~후에\nafternoon\t오후\nagain\t다시, 또\nage\t나이, 연령\nago\t~전에\nair\t공기, 공중\nairport\t공항\nalbum\t앨범\nall\t모든, 모두\nalong\t~을 따라서\nalways\t항상, 언제나\nam\t~이다, 있다\namerica\t미국\namerican\t미국의, 미국인\nan\t하나의\nand\t그리고, ~와\nangry\t화난\nanimal\t동물\nanswer\t대답, 대답하다\nant\t개미\nany\t어떤, 얼마간의\napartment\t아파트\napple\t사과\narm\t팔\naround\t주위에, 대략\narrive\t도착하다\nart\t미술, 예술\nartist\t화가, 예술가\nas\t~로서, ~할 때\nask\t묻다, 요청하다\nat\t~에서, ~에\naunt\t이모, 고모, 숙모\nautumn\t가을\naway\t떨어져, 멀리\nbaby\t아기\nback\t등, 뒤로\nbad\t나쁜\nbag\t가방\nbake\t빵을 굽다\nbaker\t제빵사\nball\t공\nballoon\t풍선\nbanana\t바나나\nband\t밴드, 악단\nbank\t은행, 강둑\nbase\t기초, 본부\nbaseball\t야구\nbasket\t바구니\nbasketball\t농구\nbat\t방망이, 박쥐\nbath\t목욕\nbathroom\t욕실, 화장실\nbe\t~이다, 있다\nbeach\t해변\nbear\t곰, 견디다\nbeautiful\t아름다운\nbecause\t~때문에\nbecome\t~이 되다\nbed\t침대\nbedroom\t침실\nbee\t벌\nbefore\t~전에\nbegin\t시작하다\nbehind\t~뒤에\nbell\t종, 벨\nbelow\t~아래에\nbench\t벤치, 긴 의자\nbeside\t~옆에\nbest\t최고의\nbetter\t더 좋은\nbetween\t사이에\nbicycle\t자전거\nbig\t큰\nbike\t자전거\nbird\t새\nbirthday\t생일\nblack\t검은색, 검은\nblow\t불다\nblue\t파란색, 파란\nboard\t판자, 게시판\nboat\t배, 보트\nbody\t몸, 신체\nbook\t책, 예약하다\nbookstore\t서점\nboot\t부츠, 장화\nbored\t지루한\nborrow\t빌리다\nboth\t양쪽의, 둘 다\nbottle\t병\nbox\t상자\nboy\t소년\nbread\t빵\nbreak\t깨뜨리다, 휴식\nbreakfast\t아침식사\nbridge\t다리\nbright\t밝은\nbring\t가져오다\nbrother\t형제, 남동생\nbrown\t갈색, 갈색의\nbrush\t솔, 붓, 빗질하다\nbuild\t짓다, 건설하다\nbuilding\t건물\nbus\t버스\nbusy\t바쁜\nbutter\t버터\nbutton\t단추, 버튼\nbuy\t사다\nby\t~옆에, ~에 의해\ncabbage\t양배추\ncake\t케이크\ncalendar\t달력\ncall\t부르다, 전화하다\ncamera\t카메라\ncamp\t캠프, 야영하다\ncan\t~할 수 있다, 통조림\ncandle\t양초\ncandy\t사탕\ncap\t모자\ncapital\t수도, 대문자\ncaptain\t캡틴, 주장\ncar\t자동차\ncard\t카드\ncare\t돌봄, 주의하다\ncareful\t조심스러운\ncarrot\t당근\ncarry\t나르다, 운반하다\ncat\t고양이\ncatch\t잡다\ncenter\t중심, 센터\nchain\t사슬, 체인\nchair\t의자\nchalk\t분필\nchance\t기회\nchange\t바꾸다, 거스름돈\ncheap\t값싼\ncheese\t치즈\nchicken\t닭, 닭고기\nchild\t아이\nchildren\t아이들\nchocolate\t초콜릿\nchoose\t선택하다\nchopsticks\t젓가락\nchurch\t교회\ncircle\t원, 동그라미\ncity\t도시\nclass\t학급, 수업\nclassmate\t반 친구\nclassroom\t교실\nclean\t깨끗한, 청소하다\nclear\t맑은, 명확한\nclever\t영리한\nclimb\t기어오르다\nclock\t시계\nclose\t닫다, 가까운\nclothes\t옷, 의복\ncloud\t구름\ncloudy\t구름 낀, 흐린\nclub\t클럽, 동아리\ncoat\t코트, 외투\ncoffee\t커피\ncoin\t동전\ncold\t추운, 감기\ncollect\t모으다, 수집하다\ncolor\t색, 색칠하다\ncome\t오다\ncomputer\t컴퓨터\ncook\t요리하다, 요리사\ncookie\t쿠키\ncool\t시원한, 멋진\ncopy\t복사하다, 베끼다\ncorner\t모퉁이\ncorrect\t맞는, 올바른\ncost\t비용이 들다\ncount\t세다, 계산하다\ncountry\t나라, 시골\ncousin\t사촌\ncover\t덮다, 덮개\ncow\t암소, 소\ncrayon\t크레용\ncross\t건너다, 십자가\ncry\t울다, 외치다\ncup\t컵\ncut\t자르다\ndad (daddy)\t아빠\ndance\t춤추다, 춤\ndanger\t위험\ndark\t어두운\ndate\t날짜, 데이트\ndaughter\t딸\nday\t날, 하루\ndead\t죽은\ndear\t친애하는, 귀중한\ndecide\t결정하다\ndelicious\t맛있는\ndesk\t책상\ndiary\t일기\ndictionary\t사전\ndie\t죽다\ndifferent\t다른\ndifficult\t어려운\ndinner\t저녁식사\ndirty\t더러운\ndish\t접시, 요리\ndo\t하다\ndoctor\t의사\ndog\t개\ndoll\t인형\ndollar\t달러\ndolphin\t돌고래\ndoor\t문\ndown\t아래로\ndraw\t그리다\ndream\t꿈, 꿈꾸다\ndress\t드레스, 옷을 입다\ndrink\t마시다, 음료\ndrive\t운전하다\ndriver\t운전사\ndrop\t떨어뜨리다, 물방울\ndry\t마른, 건조한\nduck\t오리\nduring\t~동안에\neach\t각각의\near\t귀\nearly\t일찍, 이른\nearth\t지구, 땅\neast\t동쪽\neasy\t쉬운\neat\t먹다\negg\t계란, 알\neight\t여덟\neighteen\t열여덟\neighty\t여든\neither\t양쪽 중 하나\nelephant\t코끼리\neleven\t열하나\nelse\t그 밖의\nemail\t이메일\nend\t끝, 끝나다\nengine\t엔진\nengineer\t엔지니어, 기사\nenglish\t영어, 영국의\nenjoy\t즐기다\nenough\t충분한\nenter\t들어가지\neraser\t지우개\nevening\t저녁\nevery\t모든, 매~\neveryone\t모든 사람\neverything\t모든 것\nexcuse\t변명, 용서하다\nexercise\t운동, 연습하다\nexpensive\t비싼\neye\t눈\nface\t얼굴\nfact\t사실\nfactory\t공장\nfall\t떨어지다, 가을\nfamily\t가족\nfamous\t유명한\nfan\t팬, 부채, 선풍기\nfar\t멀리, 먼\nfarm\t농장\nfarmer\t농부\nfast\t빠른, 빠르게\nfat\t뚱뚱한, 지방\nfather\t아버지\nfavorite\t가장 좋아하는\nfeel\t느끼다\nfield\t들판, 밭\nfifteen\t열다섯\nfifty\t쉰\nfight\t싸우다, 싸움\nfill\t채우다\nfilm\t영화, 필름\nfind\t찾다, 발견하다\nfine\t좋은, 벌금\nfinger\t손가락\nfinish\t끝내다\nfire\t불, 사격하다\nfirst\t첫 번째의\nfish\t물고기, 낚시하다\nfisherman\t어부\nfit\t알맞다, 건강한\nfive\t다섯\nfix\t고치다, 고정하다\nflag\t기, 깃발\nflower\t꽃\nfly\t날다, 파리\nfollow\t따라가다\nfood\t음식\nfoolish\t어리석은\nfoot\t발\nfootball\t축구, 풋볼\nfor\t~을 위하여, ~동안\nforget\t잊다\nfork\t포크\nfour\t넷\nfourteen\t열넷\nfourty\t마흔\nfox\t여우\nfree\t자유로운, 무료의\nfresh\t신선한\nfriend\t친구\nfriendly\t친절한\nfrog\t개구리\nfrom\t~로부터\nfront\t앞, 정면\nfruit\t과일\nfull\t가득 찬\nfun\t재미\nfunny\t재밌는, 웃기는\ngame\t게임, 경시\ngarden\t정원\ngas\t가스, 기체\ngate\t문, 출입구\ngentle\t점잖은, 온화한\nget\t얻다, 되다\ngirl\t소녀\ngive\t주다\nglad\t기쁜\nglass\t유리, 컵\nglove\t장갑\ngo\t가다\ngoat\t염소\ngod\t신, 하나님\ngold\t금, 금빛의\ngood\t좋은\ngoodbye\t작별 인사\ngrandfather\t할아버지\ngrandmother\t할머니\ngrape\t포도\ngrass\t풀, 잔디\ngray\t회색\ngreat\t위대한, 큰\ngreen\t초록색\nground\t땅, 운동장\ngroup\t그룹, 무리\ngrow\t자라다, 재배하다\nguess\t추측하다\nguitar\t기타\nhair\t머리카락\nhalf\t반, 절반\nhall\t홀, 복도\nhamburger\t햄버거\nhand\t손, 건네다\nhandle\t손잡이, 다루다\nhandsome\t잘생긴\nhappen\t일어나다, 발생하다\nhappy\t행복한\nhard\t단단한, 어려운, 열심히\nhat\t모자\nhate\t미워하다\nhave\t가지고 있다\nhe\t그는\nhead\t머리\nhear\t듣다\nheart\t마음, 심장\nheavy\t무거운\nhello\t안녕\nhelp\t돕다, 도움\nhen\t암탉\nhere\t여기\nhero\t영웅\nhi\t안녕\nhide\t숨기다, 숨다\nhigh\t높은\nhiking\t하이킹, 등산\nhill\t언덕\nhit\t치다, 타격\nhold\t잡다, 개최하다\nhole\t구멍\nholiday\t휴일, 명절\nhome\t집\nhomework\t숙제\nhope\t바라다, 희망\nhorse\t말\nhospital\t병원\nhot\t뜨거운, 더운\nhotel\t호텔\nhour\t시간\nhouse\t집\nhow\t어떻게\nhungry\t배고픈\nhurry\t서두르다\nhurt\t다치게 하다\nice\t얼음\nidea\t아이디어, 생각\nif\t만약 ~라면\nill\t병든, 아픈\nimportant\t중요한\nin\t~안에\nink\t먹물, 인크\ninsect\t곤충\ninside\t안쪽에\ninteresting\t흥미로운\ninto\t~안으로\ninvent\t발명하다\ninvite\t초대하다\nis\t~이다, 있다\nisland\t섬\nit\t그것\njacket\t재킷\njanuary\t1월\njeans\t청바지\njob\t직업\njoin\t함께하다, 가입하다\njuice\t주스\njump\t뛰다, 점프\njungle\t밀림, 정글\njust\t단지, 방금\nkeep\t지키다, 유지하다\nkey\t열쇠\nkick\t차다\nkid\t아이\nkill\t죽이다\nkind\t친절한, 종류\nking\t왕\nkitchen\t주방, 키친\nkite\t연\nknee\t무릎\nknife\t칼\nknock\t두드리다\nknow\t알다\nlady\t숙녀\nlake\t호수\nlamp\t등, 램프\nland\t땅, 착륙하다\nlarge\t큰, 넓은\nlast\t마지막의, 지난\nlate\t늦은\nlaugh\t웃다\nlead\t이끌다\nleaf\t나뭇잎\nlearn\t배우다\nleft\t왼쪽, 왼쪽의\nleg\t다리\nlemon\t레몬\nlend\t빌려주다\nlesson\t수업, 교훈\nlet\t~하게 하다\nletter\t편지, 글자\nlibrary\t도서관\nlie\t거짓말하다, 눕다\nlife\t생명, 삶\nlight\t빛, 가벼운\nlike\t좋아하다, ~처럼\nline\t선, 줄\nlion\t사자\nlip\t입술\nlisten\t듣다\nlittle\t작은, 조금\nlive\t살다\nlong\t긴\nlook\t보다, ~처럼 보이다\nlose\t잃다, 지다\nlot\t많은 것\nloud\t소리가 큰\nlove\t사랑하다, 사랑\nlow\t낮은\nlunch\t점심식사\nmachine\t기계\nmad\t화난, 미친\nmagazine\t잡지\nmagic\t마법, 마술\nmail\t우편물\nmake\t만들다\nman\t남자, 사람\nmany\t많은\nmap\t지도\nmarch\t3월, 행진하다\nmarket\t시장\nmarry\t결혼하다\nmath\t수학\nmatter\t문제, 중요하다\nmay\t~일지도 모른다, 5월\nme\t나를\nmeal\t식사\nmean\t의미하다\nmeat\t고기\nmedium\t중간의\nmeet\t만나다\nmelon\t멜론\nmeter\t미터\nmilk\t우유\nmind\t마음, 신경 쓰다\nmine\t나의 것\nmirror\t거울\nmiss\t놓치다, 그리워하다\nmodel\t모형, 모델\nmom (mommy)\t엄마\nmoment\t순간\nmonday\t월요일\nmoney\t돈\nmonkey\t원숭이\nmonth\t달, 월\nmoon\t달\nmore\t더 많은\nmorning\t아침\nmother\t어머니\nmountain\t산\nmouse\t쥐\nmouth\t입\nmove\t움직이다, 이사하다\nmovie\t영화\nmr.\t~씨 (남자)\nmrs.\t~부인 (결혼한 여자)\nmuch\t많은\nmusic\t음악\nmust\t~해야 한다\nname\t이름\nnarrow\t좁은\nnear\t가까운\nneck\t목\nneed\t필요로 하다\nnever\t결코 ~않다\nnew\t새로운\nnews\t뉴스\nnewspaper\t신문\nnext\t다음의\nnice\t좋은, 친절한\nnight\t밤\nnine\t아홉\nnineteen\t열아홉\nninety\t아흔\nno\t아니오\nnoise\t소음\nnoodle\t국수, 면\nnoon\t정오, 낮 12시\nnorth\t북쪽\nnose\t코\nnot\t~이 아니다\nnote\t노트, 메모\nnotebook\t공책\nnothing\t아무것도 없음\nnow\t지금\nnumber\t숫자, 번호\nnurse\t간호사\nocean\t바다, 대양\no'clock\t~시\noctober\t10월\nof\t~의\noff\t떨어져, 꺼진\noffice\t사무실\noften\t자주, 흔히\noh\t아!\noil\t기름, 오일\nok\t좋아\nold\t나이 든, 오래된\non\t~위에\nonce\t한 번\none\t하나\nonion\t양파\nonly\t오직, 유일한\nopen\t열다, 열린\nor\t또는\norange\t오렌지, 주황색\nother\t다른\nout\t밖에, 밖으로\noutside\t바깥쪽\nover\t~위에, 끝난\npage\t페이지, 쪽\npaint\t페인트, 페인트칠하다\npair\t한 쌍\npaper\t종이\nparent\t부모\npark\t공원, 주차하다\nparty\t파티\npass\t통과하다, 전달하다\npassport\t여권\npath\t길, 오솔길\npay\t지불하다\npeace\t평화\npeach\t복숭아\npear\t배(과일)\npen\t펜\npencil\t연필\npeople\t사람들\npepper\t후추, 고추\npet\t애완동물\nphone\t전화기\nphoto\t사진\npiano\t피아노\npick\t고르다, 꺾다\npicnic\t소풍\npicture\t그림, 사진\npiece\t조각\npig\t돼지\npilot\t조종사\npin\t핀\npink\t분홍색\npipe\t파이프, 관\npizza\t피자\nplace\t장소\nplan\t계획, 계획하다\nplane\t비행기\nplant\t식물, 심다\nplay\t놀다, 연주하다\nplayer\t선수\nplayground\t놀이터\nplease\t제발, 기쁘게 하다\npocket\t주머니\npoem\t시\npoint\t점, 가리키다\npolice\t경찰\npool\t수영장, 풀장\npoor\t가난한, 불쌍한\npopcorn\t팝콘\npost\t우편, 게시하다\nposter\t포스터\npotato\t감자\npractice\t연습, 연습하다\npresent\t선물, 현재의\npretty\t예쁜, 상당히\nprice\t가격\nprince\t왕자\nprincess\t공주\nproblem\t문제\npull\t당기다\npush\t밀다\nput\t놓다, 두다\nqueen\t여왕\nquestion\t질문\nquick\t빠른\nquiet\t조용한\nradio\t라디오\nrain\t비, 비가 오다\nrainbow\t무지개\nrainy\t비 오느\nread\t읽다\nready\t준비된\nreal\t진짜의\nred\t빨간색\nremember\t기억하다\nrepeat\t반복하다\nrest\t휴식, 쉬다\nrestaurant\t식당\nrice\t쌀, 밥\nrich\t부유한\nride\t타다\nright\t오른쪽, 맞는\nring\t반지, 울리다\nriver\t강\nroad\t도로, 길\nrobot\t로봇\nrock\t바위, 록 음악\nroof\t지붕\nroom\t방\nrope\t밧줄\nrose\t장미\nround\t둥근\nruler\t자를, 통치자\nrun\t달리다\nsad\t슬픈\nsafe\t안전한\nsalad\t샐러드\nsalt\t소금\nsame\t같은\nsand\t모래\nsandwich\t샌드위치\nsay\t말하다\nschool\t학교\nscience\t과학\nscissors\t가위\nsea\t바다\nseason\t계절\nseat\t좌석\nsecond\t두 번째의, 초\nsee\t보다\nsell\t팔다\nsend\t보내다\nseven\t일곱\nseventeen\t열일곱\nseventy\t일흔\nshadow\t그림자\nshall\t~할 것이다\nshape\t모양\nshe\t그녀는\nship\t배\nshirt\t셔츠\nshoe\t신발\nshop\t상점, 쇼핑하다\nshort\t짧은, 키가 작은\nshoulder\t어깨\nshout\t외치다\nshow\t보여주다, 쇼\nsick\t아픈\nside\t옆, 측면\nsing\t노래하다\nsinger\t가수\nsister\t자매\nsit\t앉다\nsix\t여섯\nsixteen\t열여섯\nsixty\t육십\nsize\t크기, 사이즈\nskate\t스케이트 타다\nski\t스키 타다\nskirt\t치마\nsky\t하늘\nsleep\t자다\nslow\t느린\nsmall\t작은\nsmart\t똑똑한\nsmell\t냄새 맡다, 냄새\nsmile\t미소 짓다, 미소\nsmoke\t연기, 담배 피우다\nsnake\t뱀\nsnow\t눈, 눈이 오다\nso\t그래서, 매우\nsoap\t비누\nsoccer\t축구\nsock\t양말\nsoft\t부드러운\nsome\t몇몇의\nsong\t노래\nsoon\t곧\nsorry\t미안한\nsound\t소리, ~하게 들리다\nsoup\t스프\nsouth\t남쪽\nspace\t공간, 우주\nspeak\t말하다\nspeed\t속도\nspoon\t숟가락\nsport\t스포츠, 운동\nspring\t봄, 스프링\nsquare\t정사각형, 광장\nstamp\t우표\nstand\t서다\nstar\t별\nstart\t시작하다\nstation\t역, 정류장\nstay\t머물다\nsteam\t증기\nstep\t걸음, 단계\nstick\t막대기, 붙이다\nstone\t돌\nstop\t멈추다\nstore\t가게, 저장하다\nstorm\t폭풍\nstory\t이야기\nstraight\t직선의, 똑바로\nstrange\t이상한\nstrawberry\t딸기\nstreet\t거리\nstrong\t강한\nstudent\t학생\nstudy\t공부하다\nsugar\t설탕\nsummer\t여름\nsun\t태양, 해\nsunday\t일요일\nsupermarket\t슈퍼마켓\nsweet\t달콤한\nswim\t수영하다\ntable\t탁자\ntail\t꼬리\ntake\t가지고 가다, 타다\ntalk\t말하다, 대화\ntall\t키가 큰\ntape\t테이프\ntaste\t맛, 맛나다\ntaxi\t택시\ntea\t차\nteach\t가르치다\nteacher\t선생님\nteam\t팀\ntelephone\t전화기\ntelevision\t텔레비전\ntell\t말하다\nten\t열\ntennis\t테니스\ntest\t시험, 테스트\nthan\t~보다\nthank\t감사하다\nthat\t저것, 저\nthe\t그\ntheater\t극장\nthem\t그들을\nthen\t그때, 그리고 나서\nthere\t거기에\nthese\t이것들\nthey\t그들은\nthick\t두꺼운\nthin\t얇은\nthing\t것, 물건\nthink\t생각하다\nthird\t세 번째의\nthirsty\t목마른\nthirteen\t열셋\nthirty\t서른\nthis\t이것, 이\nthose\t저것들\nthree\t셋\nthrough\t~을 통하여\nthrow\t던지다\nticket\t표, 티켓\ntie\t넥타이, 묶다\ntiger\t호랑이\ntime\t시간\ntired\t피곤한\nto\t~로, ~에게\ntoday\t오늘\ntogether\t함께\ntomato\t토마토\ntomorrow\t내일\ntongue\t혀\ntoo\t또한, 너무\ntooth\t이, 치아\ntop\t꼭대기, 팽이\ntouch\t만지다\ntown\t마을, 도시\ntoy\t장난감\ntrain\t기차, 훈련하다\ntravel\t여행하다\ntree\t나무\ntrip\t여행\ntruck\t트럭\ntrue\t진실의, 사실인\ntry\t시도하다, 노력하다\ntulip\t튤립\nturn\t돌다, 차례\ntwelve\t열둘\ntwenty\t스물\ntwo\t둘\numbrella\t우산\nuncle\t삼촌, 이모부\nunder\t~아래에\nunderstand\t이해하다\nuntil\t~까지\nup\t위로\nuse\t사용하다\nuseful\t유용한\nusual\t평소의\nvacation\t방학, 휴가\nvegetable\t채소\nvery\t매우\nvideo\t비디오\nvillage\t마을\nviolin\t바이올린\nvisit\t방문하다\nvoice\t목소리\nwait\t기다리다\nwake\t깨우다, 깨다\nwalk\t걷다\nwall\t벽\nwant\t원하다\nwarm\t따뜻한\nwash\t씻다\nwatch\t시계, 지켜보다\nwater\t물\nway\t길, 방법\nwe\t우리는\nwear\t입다, 착용하다\nweather\t날씨\nweek\t주, 일주일\nwelcome\t환영하다\nwell\t잘, 건강한\nwest\t서쪽\nwet\t젖은\nwhat\t무엇\nwheel\t바퀴\nwhen\t언제\nwhere\t어디\nwhich\t어느 것\nwhite\t하얀색\nwho\t누구\nwhy\t왜\nwide\t넓은\nwife\t아내\nwind\t바람\nwindow\t창문\nwing\t날개\nwinter\t겨울\nwipe\t닦다\nwith\t~와 함께\nwoman\t여자\nwood\t나무, 목재\nword\t단어\nwork\t일하다, 작품\nworld\t세계, 세상\nwrite\t쓰다\nwrong\t틀린, 잘못된\nyear\t해, 연도\nyellow\t노란색\nyes\t네\nyesterday\t어제\nyou\t너, 당신\nyoung\t어린, 젊은\nzoo\t동물원",
+mid:"person\t사람\nlife\t삶, 생명\njob\t일, 직업\ncountry\t국가, 시골\nearth\t지구, 흙\nproblem\t문제\nway\t길, 방법\nlanguage\t언어\nstory\t이야기, 층\nlot\t운, 운세\nname\t이름\nhand\t손, 건네다\nplace\t장소\npractice\t연습, 실천\nwork\t일, 작품\nuse\t사용하다\nkind\t친절한, 종류\nfun\t재미\nfuture\t미래\nhave\t가지다\nmake\t만들다\nlet\t~하게 해주다\nget\t얻다, 취하다\ntake\t가져가다\ndifferent\t다른, 다양한\nimportant\t중요한\nright\t옳은, 권리\nsure\t확실한\nwell\t잘, 우물\nhard\t딱딱한, 열심히\nclothes\t천, 옷감\nmovie\t영화\nactivity\t활동\nexample\t예, 사례\ndialogue\t대화\nletter\t편지\nfire\t불, 해고하다\nminute\t분\npart\t부분, 일부\nplan\t계획\nplant\t식물, 심다\npark\t공원, 주차하다\ncall\t부르다, 전화하다\ntry\t노력하다\nneed\t필요로 하다\nkeep\t지키다, 유지하다\nlisten\t듣다\nfind\t찾다, 발견하다\nlearn\t배우다\nlive\t살다\nmean\t의미하다\nlast\t지속하다\nany\t어떤\neach\t각각의\nother\t다른\nanother\t또 다른\nsame\t같은\ntoo\t또한, 너무\nalso\t또한\nreally\t정말로\nbird\t새\nrestaurant\t식당\ntrip\t여행, 출장\nvacation\t휴가, 방학\nspace\t공간, 우주\nstreet\t거리\nside\t측, 입장\npaper\t종이\nnewspaper\t신문\nface\t얼굴, 마주하다\nmind\t마음, 꺼리다\nchange\t변화하다\nvisit\t방문하다\nstart\t시작하다\nwatch\t주시하다\nlight\t빛, 가벼운\npresent\t현재, 선물\nmiddle\t중간의\nfavorite\t좋아하는\nenjoy\t즐기다\nwin\t이기다, 획득하다\nunderstand\t이해하다\nwarm\t따뜻한\nclean\t청소하다\nown\t자신의, 소유하다\ninteresting\t흥미로운\nfamous\t유명한\nspecial\t특별한\nfast\t빠른\nonly\t오직, 유일한\nnature\t자연, 본성\nstate\t상태, 진술하다\nisland\t섬\ngroup\t무리, 무리 짓다\nsoldier\t군인\nhabit\t습관\nculture\t문화\nhistory\t역사\ninformation\t정보\nadvertisement\t광고\nscience\t과학\nwar\t전쟁\nstore\t상점, 저장하다\nsound\t소리, 들리다\npoint\t핵심, 가리키다\nland\t착륙하다\nturn\t차례, 회전하다\nfly\t날다, 파리\nbegin\t시작하다\ngrow\t자라다\nbelieve\t믿다\nworry\t걱정하다\nsave\t구하다, 저장하다\nplease\t만족시키다\neasy\t쉬운\npoor\t가난한, 어설픈\nsuch\t그러한, 그렇게\njust\t단지, 정당한\nback\t뒤, 등\nalways\t항상\nvillage\t마을\nforest\t숲\nleaf\t나뭇잎\nvegetable\t채소\noffice\t사무실\nmachine\t기계\narea\t지역, 영역\npiece\t조각\ngrace\t은혜, 은총\nspring\t봄, 샘물, 튀다\nrock\t바위, 흔들다\nline\t선\nexercise\t운동하다\nend\t끝, 목적\ncook\t요리하다\nfall\t떨어지다, 가을\nfront\t앞, 전면\nsecond\t두 번째, 초\ncold\t추운, 감기\nhappen\t일어나다\nleave\t떠나다, 방치하다\nremember\t기억하다\nwear\t입다, 닳다\nmove\t움직이다\nsend\t보내다\nlarge\t큰, 거대한\nhot\t뜨거운, 매운\nearly\t일찍\noften\t종종, 자주\nsometimes\t때때로\nneighbor\t이웃, 동네\npet\t애완동물\nbottle\t병\nart\t예술, 기술\npoem\t시\nsubject\t과목, 주제\nweekend\t주말\nprice\t왕자\ncustom\t관습\nfact\t사실\nrule\t규칙, 통치하다\nbreak\t깨다, 휴식\ncheck\t확인하다\nstay\t머물다\nbring\t가져오다\nbuild\t짓다, 축적하다\njoin\t합류하다\nlose\t지다, 길을 잃다\ndie\t죽다\nhalf\t절반의\nfew\t거의 없는\nboth\t둘 다\nsick\t아픈\nbusy\t바쁜\nreal\t실제의, 진정한\nwrong\t잘못된\nmost\t대부분의\nlate\t늦은\ntogether\t함께\neven\t심지어, 평평한\nhealth\t건강\nholiday\t휴일\ngift\t선물, 재능\nfield\t분야, 들판\nsite\t위치, 유적\ngoal\t목표\neffect\t효과\nsign\t신호, 징조\nreport\t보고하다\norder\t주문, 명령, 질서\nexperience\t경험하다\nresult\t결과\nride\t타다, 주행하다\nwish\t소망하다\nhuman\t인간\npast\t과거, 지난\ncarry\t휴대하다, 옮기다\ndraw\t그리다, 당기다\nspend\t쓰다, 보내다\nwait\t기다리다\ndecide\t결정하다\nchoose\t고르다\ntrue\t진실한\npopular\t인기 있는\ndifficult\t어려운\nforeign\t외국의\nable\t능력 있는\nfull\t가득 찬\nusually\t대게\nnever\t결코 ~아닌\nbrain\t두뇌\nvoice\t목소리\nopinion\t의견\nage\t나이, 노화\ncentury\t세기, 100년\nevent\t사건, 행사\ndish\t접시, 요리\ntoy\t장난감, 장난치다\nsubway\t지하철\nhundred\t백(100)\nthousand\t천(1,000)\nrest\t쉬다, 나머지\nwaste\t낭비하다, 쓰레기\nsurprise\t놀라게 하다\nbear\t견디다, 낳다\nfight\t싸우다\nbuy\t사다, 구매하다\nsell\t팔다, 팔리다\nfollow\t따르다, 추적하다\nmiss\t놓치다, 그리워하다\nclose\t가까운, 닫다\nfree\t자유로운, 무료의\nupset\t언짢은\nhealthy\t건강한\ndelicious\t맛있는\nsad\t슬픈\ncareful\t주의 깊은\nready\t준비 된\naway\t멀리, 떨어진\nhowever\t하지만\npresident\t대통령\ndiary\t일기\ncartoon\t만화\nmeal\t식사\ncharacter\t문자, 성격\nreason\t이유\nground\t지면, 기반\ncommunity\t공동체\nglass\t유리\nweight\t무게\ncontrol\t통제하다\nstep\t단계\nmatter\t문제, 중요하다\nmatch\t어울리다, 필적하다\nset\t설치하다, 정하다\ncatch\t잡다\nhold\t유지하다, 껴안다\npick\t줍다, 고르다\nteach\t가르치다\nagree\t동의하다\ninvent\t발명하다\nwelcome\t환영하다\nbright\t밝은\nsmart\t영리한\nwise\t현명한\nhungry\t배고픈\nfine\t훌륭한, 벌금\npretty\t예뿐, 매우\nstill\t여전히, 정지한\nlater\t나중에\nteenager\t십대\narm\t팔, 무기, 무장하다\nskill\t기술\nfactory\t공장\nprize\t상, 상을 주다\nchance\t기회, 가능성\nshape\t모양, 형태\ndifference\t차이, 차별\nwall\t벽\ncontest\t경연\nrace\t경주, 인종\nsmell\t냄새가 나다\ninterest\t흥미롭게 하다\njudge\t판단하다\ncause\t원인, 유발하다\ncover\t덮다, 다루다\ntravel\t여행하다, 이동하다\nguess\t추측하다\nfinish\t끝마치다\nwash\t닦다\nintroduce\t소개하다, 도입하다\nhurt\t상처를 주다(받다)\ntired\t피곤한\nproud\t거만한, 당당한\ndirty\t더러운\nangry\t화난\nmodern\t현대의\nuseful\t유용한\nsoon\t곧\nonce\t한때, 일단 ~하면\nenvironment\t환경\npollution\t오염, 공해\nlake\t호수\ndesert\t사막, 버리다\ninsect\t곤충\naccident\t사건, 사고, 우연\ncollege\t대학\nexam\t시험\nadvice\t충고\nhobby\t취미\nform\t형태, 형성하다\nmark\t표시, 기록\nboard\t판자, 탑승하다\npost\t게시하다\nlaugh\t웃다, 비웃다\nexcuse\t변명, 용서\npass\t지나가다, 통과하다\ndrive\t운전하다\nreceive\t받다, 수령하다\nkill\t죽이다\nclimb\t오르다, 등산하다\nadd\t더하다, 추가하다\nfat\t뚱뚱한, 지방\ndark\t어두운\nwhole\t전체의\nafraid\t두려운, 유감의\nphysical\t물리적인\ndangerous\t위험한\noff\t떨어져, 끊어져\nover\t~위에, ~이상\nclerk\t점원\nfoot\t발\ncompany\t회사, 교제\ngarage\t차고\npalace\t왕궁\nhole\t구멍\nbill\t지폐, 계산서, 법안\nseed\t씨앗\nmedicine\t약, 의학\nluck\t운, 행운\nmeaning\t의미\nvolunteer\t자원하다\nview\t보다, 견해\nlie\t눕다, ~에 있다\nact\t행동하다\npay\t지불하다\nshout\t외치다\ncross\t교차하다\nseem\t보이다\ninvite\t초대하다\narrive\t도착하다\ncollect\t모으다, 수집하다\nrich\t부유한\nblind\t눈이 먼\nheavy\t무거운\nterrible\t끔찍한\nstrange\t이상한, 낯선\npossible\t가능한\nmaybe\t아마도\nago\t~전에\nsense\t감각, 감지하다\npleasure\t기쁨, 즐거움\nimage\t영상, 이미지\nmap\t지도\nproject\t계획, 영사하다\ntraffic\t교통\nsafety\t안전\nspaceship\t우주선\nrainbow\t무지개\nmillion\t백만\nmodel\t모범, 모형\ntype\t유형\nblock\t막다, 차단하다\nseat\t앉히다\ntouch\t만지다, 감동시키다\nwonder\t의아해하다\nmagic\t마법의, 마술\nsecret\t비밀, 비결\ngeneral\t일반적인, 장군\nprepare\t준비하다\nimagine\t상상하다\nforget\t잊다\ndevelop\t발전하다, 계발하다\nrecycle\t재활용하다\nseveral\t몇몇의\nfunny\t재미있는\nsafe\t안전한, 금고\nenough\t충분한\nloud\t큰, 시끄러운\nfar\t먼, 멀리 떨어진\ntruth\t진실\nsuccess\t성공\nfriendship\t우정\nbeing\t존재\ngoods\t상품\ncoin\t동전\nbank\t은행, 둑, 제방\naddress\t주소, 연설하다\nelectricity\t전기\nlaw\t법\ncampaign\t군사행동, 유세\nsentence\t문장, 판결하다\nheat\t열, 가열하다\ncircle\t원\nreach\t도착하다\nmix\t섞다, 혼합하다\nexcite\t흥분시키다\nrise\t오르다\nlead\t이끌다\nenter\t들어가다\nfill\t채우다\nproduce\t생산하다\ncool\t시원한, 식히다\nslow\t느린, 더딘\nclear\t깨끗한, 분명한\nfalse\t거짓의\nnational\t국가의\nmain\t주요한\nalmost\t거의\nfinally\t마침내, 결국\nlibrary\t도서관, 서재\nmuseum\t박물관\nocean\t바다, 대양\nbone\t뼈\nbath\t목욕하다\npity\t유감\nproverb\t속담\nproduct\t제품\ninvention\t발명\ntechnology\t기술\ntrash\t쓰레기\nmoment\t순간\ndate\t날짜\ntaste\t맛이 나다\nbalance\t균형\nring\t울리다\nshare\t나누다, 공유하다\nreturn\t돌아오다, 반납하다\nlift\t들어 올리다\nraise\t올리다, 기르다\nexplain\t설명하다\nmarry\t결혼하다\nexciting\t흥미로운\ncommon\t공통의, 흔한\nglobal\t세계의\nregular\t규칙적인\nserious\t심각한, 진지한\nfresh\t신선한\nprobably\t아마도\nelse\t그 밖의\npeace\t평화\nbeauty\t아름다움\nsight\t시각, 시력, 견해\nnation\t국가\nforeigner\t외국인\nlend [확인필요]\t빌리다\nmagazine\t잡지\nstorm\t폭풍\nstraw\t빨대, 지푸라기\ndisease\t질병\nrespect\t존중하다\nreply\t대답하다\nrecord\t기록하다\ncheer\t응원하다\nshake\t흔들다\nkey\t열쇠, 핵심\nsquare\t사각형\nwake\t깨어나다\ndiscover\t발견하다\nsolve\t풀다, 해결하다\ncontinue\t계속하다\nburn\t타다, 태우다\nsimple\t간단한, 검소한\nquiet\t조용한\ntraditional\t전통적인\ninternational\t국제적인\nhuge\t거대한, 엄청난\namazing\t놀라운\ninstead\t대신에\nsuddenly\t갑자기\nbridge\t다리, 연결하다\nghost\t유령\nscene\t장면\neffort\t노력\nwisdom\t지혜\nfault\t실수, 잘못\nflight\t비행, 비행하다\nzoo\t동물원\ncandle\t초, 양초\nbottom\t바닥\nmistake\t실수\ntrouble\t문제, 골칫거리\nbat\t방망이, 치다\nblow\t불다, 타격하다\nflood\t넘쳐흐르다, 홍수\nhurry\t서두르다\ntreat\t다루다, 대접하다\nexpress\t표현하다\nbreathe\t호흡하다\nhate\t미워하다\ncreate\t창조하다, 만들다\ndivide\t나누다, 분할하다\nsoft\t부드러운\nempty\t텅 빈, 비우다\nperfect\t완벽한\nsuccessful\t성공적인\neveryday\t매일\nlow\t낮은\nalone\t혼자\ninside\t내부, 내부의\ncreature\t생물, 생명체\npolice\t경찰\narmy\t군인\nsociety\t사회\nfan\t애호가, 부채\nwheel\t바퀴\npair\t쌍, 짝\njoy\t즐거움\nmemory\t기억, 기억력\nrecipe\t조리법\nkid\t아이\nsmoke\t연기\nfavor\t애호, 선호\ntrick\t속임수, 비결\nexperiment\t실험\ndrop\t방울, 떨어뜨리다\npress\t누르다, 압박하다\nstick\t막대기, 찌르다\nroll\t구르다\nserve\t제공하다\nimprove\t개선하다, 나아지다\nrealize\t깨닫다, 실현하다\ndry\t마른, 건조한\ncomplete\t완성하다\nlucky\t운 좋은\nnatural\t자연의, 당연한\nfriendly\t친절한, 친근한\ncute\t귀여운\nalready\t이미\nespecially\t특히\nhometown\t고향\nyard\t마당, 뜰\ngrocery\t식료품\nfairy\t요정\nflag\t깃발\nmanner\t방법, 예절\nnoise\t소음\npain\t고통\ndanger\t위험\nguide\t안내하다\ncoach\t코치\nnote\t기록, 음표, 주목\ncount\t셈하다, 중요하다\nsail\t항해하다\npromise\t약속하다\nrepeat\t반복하다\nbake\t굽다\ngather\t모으다\nsucceed\t성공하다, 계승하다\nprotect\t보호하다\nadvertise\t광고하다\ndisappear\t사라지다\nelectric\t전기의, 전자의\nlovely\t사랑스러운\nthin\t마른, 가는\nround\t둥근\ndeep\t깊은\nwide\t넓은\nyet\t아직\nquickly\t빠르게\ncouple\t한 쌍\nhoney\t꿀\ntourist\t관광객\ngate\t문, 입구\nbackground\t배경\ncapital\t수도, 자본\nvalley\t계곡\ndirection\t방향, 지침\ndistance\t거리\nbehavior\t행동\nobject\t물체, 대상\ndictionary\t사전\ntear\t눈물, 찢다\nhonor\t명예, 존경\nincrease\t증가하다\nbite\t물다\nmale\t남성의\nnative\t토착의\ndisappoint\t실망시키다\nshine\t빛나다\nfix\t고치다, 고정하다\npour\t쏟아 붓다\nallow\t허락하다\nprevent\t예방하다, 막다\ncertain\t특정한\nmental\t정신의\ncomfortable\t편안한\nexpensive\t비싼\ntherefore\t그러므로\neverywhere\t어디서나\naction\t행동, 조치\ntalent\t재능\nchoice\t선택\nslave\t노예\nsituation\t상황\npride\t자부심\ntip\t조언, 끝부분\nstair\t계단\nsoil\t흙, 토양\nmaster\t주인, 숙달하다\nsuit\t소송, 적합하다\nnotice\t알아채다\nbow\t절하다\nrush\t돌진하다\nadult\t성인\nprincipal\t주요한, 교장\nfolk\t사람들, 평민\nmaterial\t물질적인\nstandard\t기준, 표준\nstiff\t뻣뻣한\naccept\t받아들이다\nobey\t복종하다\nhide\t숨기다\nbasic\t기본적인\nlocal\t지역의\nboring\t지루한\nweak\t약한\nquick\t빠른\neasily\t쉽게\nabroad\t외국에, 해외로\nhero\t영웅\nability\t능력\nknowledge\t지식\ntechnique\t기술\nfloor\t층, 바닥\ncancer\t암\ndiet\t식단, 다이어트\ngarbage\t쓰레기\ncash\t현금\ncountryside\t시골, 교외\nroute\t길, 경로\namount\t양\nscore\t점수, 득점하다\nchallenge\t도전, 고난\ncure\t치료하다\nappear\t나타나다\nspread\t퍼지다\nhunt\t사냥하다\ndestroy\t파괴하다\nconsider\t여기다, 고려하다\nexpect\t예상하다\nsuggest\t제안하다\ncultural\t문화의\nsocial\t사회의\nelderly\t나이든, 구식의\nunhappy\t불행한\ncrazy\t미친, 열광한\nalive\t살아있는\noutside\t외곽, 밖\nquite\t꽤, 매우\nhost\t주인, 진행자\nathlete\t운동선수\naudience\t청중, 관객\ntemperature\t온도\ncell\t세포, 전지\ntransportation\t운송, 수송\nbowl\t그릇\nbrick\t벽돌\nplanet\t행성\ntail\t꼬리\nwing\t날개\npurpose\t목적, 용도\ndecision\t결정\nfrighten\t깜짝 놀란\nscare\t두렵게 하다\nslip\t미끄러지다\nmelt\t녹다\npollute\t오염시키다\naffect\t영향을 주다\ndepend\t의지하다\nmanage\t관리하다\nfit\t적당한, 건강한\ncorrect\t수정하다\nsurprising\t놀라운\nactive\t활동적인, 적극적인\ncolorful\t화려한\nwet\t젖은\nwild\t야생의\ndaily\t매일의\nstraight\t곧은, 직선의\ngod\t신\nguest\t손님\ndiver\t잠수부\nblood\t피\npool\t웅덩이\ntemple\t사원, 신전\nthought\t생각\ncrop\t곡식, 작물\nsheet\t(종이 등의) 장\nquarter\t1/4\ncrowd\t군중\ncare\t관심을 갖다\nstrike\t치다, 파업\nrelative\t상대적인, 친척\npatient\t인내심이 있는, 환자\ngain\t얻다\nprovide\t제공하다\ndig\t파다\nexplore\t탐구(탐험)하다\nwarn\t경고하다\nrecognize\t인식(인정)하다\ncelebrate\t축하하다\nstupid\t멍청한\nhelpful\t유용한\nconvenient\t편리한\nimpossible\t불가능한\nmedical\t의학의\noutdoor\t야외\nforever\t영원히\nindeed\t실제로\nwood\t나무, 목재\ncave\t동굴\ntomb\t무덤\ntool\t도구\nsatellite\t인공위성\ncommunication\t의사소통\nwealth\t부, 재산\nattention\t관심\nmiracle\t기적\nstream\t시내, 냇물\nwave\t파도, 파장\nvalue\t가치, 귀중히 여기다\nbeat\t물리치다\nsupport\t지지(지탱)하다\nchemical\t화학의\nfemale\t여성의\nfair\t공정한\nrespond\t반응(응답)하다\ndeliver\t전달(배달)하다\nfold\t접다\ninclude\t포함하다\nearn\t벌다, 얻다\nbet\t내기하다, 단언하다\ncalm\t고요한, 침착한\ndirect\t지시하다, 직접적인\nsweet\t달콤한\nthick\t두꺼운\nabstract\t추상적인\nsomeday\t어느 날\nnowadays\t요즘\nlawyer\t변호사\nofficer\t경관\nuniversity\t대학교\nlevel\t수준\ngrowth\t성장\njourney\t여행\ngun\t총\nemergency\t응급상황\ncase\t사례, 경우\ndifficulty\t어려움\naddition\t추가, 첨가\ncredit\t신용, 학점, 인정\nfool\t바보, 속이다\nharvest\t수확하다\nfigure\t숫자, 모양, 인물\ntie\t묶다, 유대\nboil\t끓이다\nborrow\t빌리다\nbelong\t속하다\ncommunicate\t소통하다, 전하다\nconfuse\t혼동시키다\nsurvive\t생존하다\nhandsome\t잘생긴\ngentle\t정중한\nmad\t미친\nmerry\t기쁜\nnoisy\t시끄러운\nscientific\t과학적인\nmostly\t대게\nanywhere\t어디서나\ncaptain\t선장, 주장\nstranger\t낯선 사람\nstatue\t동상\nspirit\t정신\nscenery\t배경, 풍경\ngesture\t몸짓\npole\t기둥\nrubber\t고무\nstructure\t구조\nroot\t뿌리\nschedule\t일정\ntour\t관광하다\ncharge\t충전하다, 부과하다\ndecrease\t줄어들다\nreview\t복습하다\nvote\t투표하다\nattend\t참석하다\ndiscuss\t토론하다\nsettle\t정착하다\nelect\t선거하다\nachieve\t이루다\nappreciate\t감사하다, 인정하다\nbrave\t용감한\ncheap\t값싼\nclassical\t고전의\nfamiliar\t친숙한\nunknown\t미지의\nuncomfortable\t불편한\nsimply\t단순히\nanyway\t어쨌든\npopulation\t인구\ncoast\t해변\nbucket\t양동이\ncart\t수레\ncage\t우리\nscreen\t가리다, 차단하다\nkite\t연\nautumn\t가을\nbreeze\t산들바람\nmess\t혼란, 엉망\nlitter\t더럽히다\njoke\t농담\nhike\t걷다\nfear\t두려움\noffer\t제공(제안)하다\nremain\t여전히 ~이다\nrepair\t수리하다\nblank\t공허한, 빈칸\nfinal\t마지막의\npublic\t공공의\nbend\t구부리다\nfloat\t뜨다, 표류하다\nbark\t짖다, 나무껍질\nconcentrate\t집중하다\ndead\t죽은\npersonal\t개인적인\nhistoric\t역사적인\nwestern\t서쪽의\nahead\t앞에, 앞서서\nexactly\t정확히\ngovernment\t정부\nstomach\t위, 위장\nflour\t밀가루\ndoll\t인형\ncyberspace\t우주공간\nstrength\t힘, 체력\nwill\t~할 것이다, 유언장\ndevelopment\t발전, 개발\nengineering\t공학\nedge\t가장자리, 우세\npattern\t모범, 모형, 양식\nalarm\t경보, 경계\ndot\t점\ncost\t비용\nfocus\t초점, 집중\nshock\t충격을 주다\nreward\t보답(보상)하다\nimpress\t인상을 주다\nreplace\t교체(대체)하다\nfail\t실패하다\nskip\t건너뛰다\nnecessary\t필수적인\nelementary\t기본의, 초등의\nfantastic\t환상적인\ntasty\t맛있는\nflat\t평평한\ntough\t거친, 강인한\noutstanding\t탁월한\nforward\t앞으로\nbadly\t심하게, 나쁘게\nclimate\t기후\ndegree\t정도, 학위\narticle\t기사, 물품\nmetal\t금속의\nmonster\t괴물\ntreasure\t보물, 귀중히 여기다\nsymbol\t상징\nceremony\t의식\ncongratulation\t축하\nbreath\t호흡\ndeath\t죽음\nheadache\t두통\nmuscle\t근육\nbase\t기본, 기초\nlock\t잠그다\ndislike\t싫어하다\nfeed\t먹이를 주다\nrent\t임대하다\nsuffer\t고통을 주다\nhang\t매달다\nwrap\t포장하다\npleasant\t유쾌한\nlonely\t외로운\nthirsty\t목마른\npolite\t정중한\nrude\t무례한\nexcellent\t훌륭한\noverweight\t과체중의\nperhaps\t아마도\ntwice\t두 번, 두 배\nheaven\t하늘, 천국\ntenant\t세입자\nhelicopter\t헬리콥터\nsand\t모래\ncastle\t성\nkindness\t친절\nconcentration\t집중, 농도\nmystery\t불가사의\nbattle\t전투, 싸우다\nindustry\t산업\nchat\t잡담하다\npuzzle\t당혹하게 하다\nbloom\t꽃, 개화하다\nadvance\t진보\ngraduate\t졸업하다\npredict\t예측(예언)하다\ncompare\t비교하다\ncomplain\t불평하다\nforgive\t용서하다\ndetermine\t결정하다\nexist\t존재하다\nholy\t신성한\nupper\t위쪽의\ncentral\t중심의\nnormal\t정상적인, 평범한\nsimilar\t비슷한\nhonest\t정직한\nashamed\t부끄러운\nanymore\t이제는, 더 이상\nbesides\t게다가, 더욱이\ngeneration\t세대\nself\t자아\nmaxim\t격언\nportrait\t초상화\nfist\t주먹\ndarkness\t어둠\nearthquake\t지진\nweapon\t무기\ncharity\t자선단체\nsaying\t속담\nissue\t문제, 발행하다\nsignal\t신호를 보내다\nexchange\t교환하다\nswallow\t삼키다, 제비\naverage\t평균적인\nofficial\t공식적인\ngray\t화색, 회색의\nprefer\t선호하다\nrelax\t쉬다\nreduce\t줄이다\nbury\t묻다\nshoot\t쏘다\nyell\t고함을 지르다\npowerful\t강력한\nfaithful\t신뢰할만한\ncreative\t창의적인\ndeaf\t귀가 먼\nelectronic\t전자의\nnearly\t거의\nhappily\t행복하게\nancestor\t조상\nchairperson\t의장\ncustomer\t손님, 고객\nastronaut\t우주비행사\ndynasty\t왕조\nfurniture\t가구\ndrug\t약\ngreenhouse\t온실\nharmony\t조화\ndirt\t먼지\nshot\t주사\ncurve\t휘어진, 굴곡진\nstuff\t물건, 속을 채우다\npack\t싸다, 포장하다\nspill\t쏟다, 엎지르다\ndebate\t토론, 토론하다\nwhisper\t속삭이다\nlay\t눕히다, ~에 두다\npardon\t용서, 용서하다\nbeg\t간청(구걸)하다\nrelate\t관련시키다\nintelligent\t지적인\neager\t열망하는\ndisabled\t불구의\nhomeless\t집 없는\nharmful\t해로운\nlifelong\t평생에 걸친\nnervous\t초조한\nseldom\t거의 ~아닌\nsomewhere\t어딘가\nbirth\t출생, 탄생\nchildhood\t어린 시절\neducation\t교육\nemotion\t감정\nattitude\t태도\ncourage\t용기\ncondition\t상태, 조건\nfever\t열\nconversation\t대화\nadventure\t모험\ntriangle\t삼각형\nbulb\t전구\nattack\t공격하다\ncough\t기침, 기침하다\nflow\t흐르다\nsearch\t조사(검색)하다\noriginal\t본래의, 참신한\nopposite\t정반대의\njog\t뛰다, 달리다\nscan\t조사하다\ndescribe\t묘사하다\nfreeze\t얼다\nremove\t제거하다\nsingle\t단 하나의\npositive\t긍정적인\nugly\t추한\nnorthern\t북쪽의\nnearby\t근처에\nupside down\t거꾸로\ndowntown\t시내\nthief\t도둑\nlifetime\t일생\ncareer\t직업, 경력\nfitness\t건강, 적당\neconomy\t경제\nfur\t모피, 털\nengine\t엔진\nballoon\t풍선\nborder\t국경, 경계\ndisaster\t재앙\nforecast\t예상(예보)하다\nquarrel\t싸움, 다툼\nharm\t해를 입히다\nglue\t접착제\nregard\t간주하다\nsink\t가라앉다\ncharacteristic\t특성 있는, 특성\nprofessional\t전문적인\nencourage\t격려하다\nreflect\t반사(반영)하다\nslide\t미끄러지다\nstretch\t쭉 뻗다\nsteal\t훔치다\ncomic\t희극의, 만화의\nanxious\t걱정하는, 열망하는\nasleep\t잠든\neffective\t효과적인\ndue to\t~때문에\nactually\t실제로\nrather\t오히려, 다소\nmanager\t관리자\nshore\t해안\nsunrise\t일출, 해돋이\nlighting\t조명\nwire\t배선, 배선하다\nstage\t무대\nzone\t지역\nheight\t키, 높이\nprediction\t예측, 예언\nmarriage\t결혼\nperiod\t기간, 마침표\nclaim\t주장하다\ndeal\t거래\nlimit\t제한하다\ntap into\t활용하다\nspray\t뿌리다\nweigh\t무게가 나가다\npray\t기도하다\ngreet\t인사하다\nchew\t씹다\nattract\t끌어들이다\novercome\t극복하다\nsalty\t짠\nsouthern\t남쪽의\ncurious\t호기심이 있는\nhumorous\t유머 있는\nfoolish\t멍청한\ngreedy\t탐욕스러운\nvaluable\t귀중한\ncertainly\t분명히\nagent\t대리, 대행\npolitics\t정치학\nreality\t현실\nrelationship\t관계\nrole\t역할\ntheater\t극장\nperformance\t실적, 공연\ncast\t던지다\nreservation\t예약, 보류\nsightseeing\t관광\npath\t길, 통로\nsource\t자원, 근원\nproof\t증거\nterm\t용어, 기간\nnet\t그물\ntrust\t신뢰하다\ncrash\t충돌하다\nhatch\t부화하다\nclap\t박수치다\nannounce\t알리다, 고지하다\nrepresent\t나타내다, 대표하다\ndevote\t바치다, 헌신하다\npeaceful\t평화로운\npainful\t고통스러운\nsharp\t날카로운\nresponsible\t책임감이 있는\nlazy\t게으른\nlikely\t가능성이 있는\ncompletely\t완벽히, 완전히\nimmediately\t즉시\narchitect\t건축가\nnarrator\t해설자\nenemy\t적\nthroat\t목, 성대\nillness\t질병\nweed\t잡초\nhumor\t유머\nvolcano\t화산\nkingdom\t왕국\nattempt\t시도하다\naward\t수상(수여)하다\nbroadcast\t방송하다\naid\t돕다\nnod\t끄덕이다\nescape\t탈출하다\nenvy\t부러워하다\nmeasure\t측정하다\nchief\t우두머리, 주요한\ntotal\t전체의\nworth\t가치, 가치 있는\nembarrass\t난처하게 하다\nerupt\t붕괴하다\nperform\t실행하다, 공연하다\npublish\t출판하다\nsilent\t조용한\nsilly\t어리석은\nscary\t무서운\nsore\t아픈, 쑤시는\nbitter\t쓰라린, 혹독한\nlately\t요즈음, 최근\nlandscape\t풍경, 경치\nconstruction\t건설\nmood\t기분, 감정\nexcitement\t흥분, 흥미\ncomplaint\t불평\nconfidence\t자신감\ninvasion\t침입, 침략\ncontainer\t용기, 그릇\nash\t재\nbar\t방망이, 빗장\ncontact\t접촉하다\nbenefit\t이익, 이득\ndamage\t피해, 손해\nsupply\t공급하다\ndemand\t요구하다\nlack\t부족, 부족하다\nconflict\t갈등\nspin\t회전하다\nscratch\t긁다, 할퀴다\nsuppose\t가정하다\nrefer\t참고하다\nruin\t파멸, 폐허\nrid\t제거하다\ntight\t꼭 끼는, 빈틈없는\nbrilliant\t훌륭한, 총명한\nspecific\t구체적인\nunusual\t유별난, 비범한\nnegative\t부정적인\nroyal\t왕족의\npartly\t부분적으로\nhappiness\t행복\nfreedom\t자유\nindependence\t독립, 자립\nimagination\t상상, 상상력\nimportance\t중요\nspeech\t말, 연설\nsilence\t침묵, 고요\ninvitation\t초대\nexhibition\t전시, 전시회\nsculpture\t조각\nregion\t지방, 지역\nposition\t자세, 위치\nresearch\t조사하다\naim\t목표, 겨냥하다\nmoral\t도덕, 도덕적인\nextra\t여분의\narrange\t배열하다, 조율하다\nadvise\t충고하다\nrecommend\t추천하다\ndeclare\t선언하다\nprove\t증명하다\ninjure\t다치게 하다\nconnect\t연결하다\nhug\t끌어 안다\nfoggy\t안개 낀\nneat\t깔끔한, 단정한\nloose\t느슨한, 헐거운\nendangered\t위기에 처한\nbound\t경계, 범위\nrecently\t최근에\nmerchant\t상인\nheritage\t유산\norganization\t조직, 기관\nkindergarten\t유치원\nmanagement\t관리, 경영\noperation\t수술, 운영, 작동\nmission\t임무\nmeans\t수단, 방법\npayment\t지불\nmerit\t가치, 장점\nmirror\t거울\nladder\t사다리\ningredient\t재료\nindex\t지침, 색인, 검지\nbehave\t행동하다\ncompete\t경쟁하다\nargue\t주장하다, 논쟁하다\nrelease\t놓아주다, 배출하다\npretend\t~인 체하다\nconclude\t결론짓다\nobserve\t관찰하다, 준수하다\nspicy\t짜릿한, 통쾌한\nterrific\t멋진, 빼어난\nsteady\t꾸준한\nspare\t아끼다, 여분의\nunique\t독특한\nunnecessary\t불필요한\nill\t아픈\nunderground\t지하, 지하의\nsincerely\t진심으로\npeer\t동년배, 또래\npressure\t압박\nassociation\t연합, 제휴\nplayground\t운동장, 놀이터\npond\t연못\nharbor\t항구\nframe\t틀, 구조, 골격\nhammer\t망치\nexpression\t표현\nquality\t질, 자질\nmovement\t움직임, 운동\npackage\t꾸러미\nsurvey\t조사하다\npanic\t당환, 공항\nsigh\t한숨을 쉬다\nrinse\t헹구다\nappeal\t매력, 호소하다\nsweep\t청소하다, 휩쓸다\nconsist\t구성되다, 있다\nunify\t통합하다\ndepress\t우울하게 하다\nblame\t비난하다(받다)\nsmooth\t부드러운\nwooden\t나무의\nhelpless\t무기력한\nincredible\t믿을 수 없는\navailable\t이용 가능한\nancient\t고대의\nrecent\t최근의\nthus\t따라서, 이렇게\nwildlife\t야생\nsunset\t일몰, 해넘이\nhorizon\t지평선, 수평선\nsteam\t증기\nwarmth\t온기, 따뜻함\nstatement\t진술, 문장\nresponse\t반응(대응)하다\ntask\t과제\nsecurity\t안전, 보안\nneedle\t바늘\nbranch\t가지, 분점\nthread\t실\nrow\t줄, 열\nyawn\t하품하다\nrub\t문지르다\nwipe\t닦다\noperate\t운영하다, 수술하다\ncontain\t담다, 포함하다\npreserve\t보존하다, 예약하다\nrefuse\t거절하다\nremind\t상기시키다\nbother\t괴롭히다\ntiny\t미세한\ncurly\t곱슬머리의\nrapid\t빠른\nshy\t수줍은\neastern\t동쪽의\nviolent\t폭력적인\nworldwide\t세계적인\nhighly\t매우\ndinosaur\t공룡\nruler\t통치자, 지배자\nadmiral\t해군 장성, 제독\nliberty\t자유\nunification\t통합, 단일화\ntrial\t시도, 재판\ntreatment\t치료\nshelter\t은신처, 피난하다\norphanage\t고아원\nitem\t물품\nfirewood\t땔감\ndessert\t디저트, 후식\nrange\t범위\nrumor\t소문\nvehicle\t차량, 탈것, 수단\nsew\t꿰매다\nassociate\t관련짓다, 연상하다\nidentify\t식별(분간)하다\nmention\t언급하다\nestablish\t세우다, 정하다\nunite\t결합하다\nfrustrate\t좌절시키다\nblond\t금발의\ncheerful\t유쾌한\ncareless\t부주의한\ndull\t무딘, 우둔한\ndisgusting\t역겨운\nwilling\t자발적인\ngolden\t황금의\napart\t떨어져서\nlung\t폐\npassport\t여권\nphoto\t사진\nenvelope\t봉투\nattendant\t수행원, 참석자\nappointment\t약속\nmidnight\t자정\nskyscraper\t고층건물\nchimney\t굴뚝\nfence\t울타리\nevidence\t증거\nfeature\t특징, 주연시키다\nflavor\t맛, 맛을 내다\nleap\t도약하다\nleak\t새어나오다\nscream\t비명을 지르다\nrefresh\t충전하다\noccur\t일어나다\nobtain\t얻다\nintend\t의도하다\nlower\t낮추다\nlean\t기대다\nequal\t같은, 평등한\nseparate\t분리하다\nhard-working\t열심히 일하는\nhopeless\t희망 없는\nvarious\t다양한\nraw\t날것의\nportable\t휴대할 수 있는\nrarely\t거의 ~아닌\npassenger\t승객\ncontinent\t대륙\nport\t항구\ncooperation\t협력, 협동\ncompetition\t경쟁, 경연\nconvenience\t편의, 편리\ncuriosity\t호기심\nsuicide\t자살하다\nbullet\t총알\nbackbone\t등뼈, 척추\ndescendant\t자손, 후예\ncollection\t수집, 소장품\ndesire\t바라다, 갈망하다\nexport\t수출하다\nstare\t응시하다\ndeceive\t속이다\ncommit\t저지르다\ntwist\t비틀다\ndecorate\t장식하다\nconvert\t전환하다\ntend\t~하는 경향이 있다\nfirm\t단호한, 회사\nsenior\t손위의, 선배의\nmajor\t주요한\nminor\t사소한, 소수의\nindividual\t개인, 개인의\ngrand\t웅대한, 장엄한\nodd\t홀수의, 이상한\nawkward\t서투른, 어색한\ndirectly\t직접적으로\nnovel\t소설, 참신한\ngrave\t무덤, 암울한\ncrime\t범죄\nprison\t감옥, 감금하다\nblanket\t담요, 덮다\nskin\t피부\ninstance\t예, 사례\nelement\t요소, 성분\ndozen\t12개\nhonesty\t정직\nduty\t의무\nfailure\t실패\nrate\t비율\nprogress\t진행, 진보\ntrade\t거래하다\ndoubt\t의심, 의심하다\nmarch\t행진하다\ndelay\t지연시키다\nsatisfy\t만족시키다\nmisunderstand\t오해하다\nscold\t꾸짖다\napply\t적용하다\ndrown\t익사하다\nbroad\t넓은, 광범위한\ncruel\t잔인한\nprivate\t사적인\nurgent\t긴급한, 급박한\nmilitary\t군, 군의\nhistorical\t역사적인\nfully\t충분히, 완전히\nuniverse\t우주\nlaughter\t웃음\nknee\t무릎\ngym\t체육관\nequipment\t장비, 설비\nrope\t밧줄\nrefrigerator\t냉장고\nproduction\t생산\ntradition\t전통\nreligion\t종교\nsemester\t학기\ncourse\t과정, 강의\nflea\t벼룩\nplug\t전기를 연결하다\nache\t아픔\nhandle\t다루다\npause\t멈추다\nadmire\t감탄(칭찬)하다\napologize\t사과하다\nthreaten\t위협하다\narrest\t체포하다\nselect\t선택하다\nnarrow\t좁은, 좁히다\nattractive\t매력적인\nawful\t두려운, 불쾌한\ncasual\t격식 없는\ncapable\t유능한\nabsent\t결석의\nalike\t같은, 마찬가지의\notherwise\t그렇지 않으면\ncitizen\t시민\nfare\t요금, 운임\ntale\t이야기, 설화\nsuggestion\t제안, 시사\nresponsibility\t책임, 책임감\nrisk\t위험\nintelligence\t지능\nviewpoint\t관점\nscissors\t가위\nshell\t껍질\nsurface\t표면, 떠오르다\nversion\t판, 버전\naccount\t계산, 계좌\ninfluence\t영향을 주다\nfasten\t묶다, 조이다\nmanufacture\t제조하다\nhire\t고용하다\nexamine\t시험하다\nexplode\t폭발하다\nerase\t지우다\ninterrupt\t가로막다, 중단하다\ndeny\t부인하다\nformer\t이전의\nclever\t영리한, 영악한\ndistant\t거리\nfaint\t희미한, 기절한\ndouble\t두 배의\nentire\t전체의\nfrequent\t빈번한\npossibly\t아마도\nauthor\t작가\nsecretary\t비서, 서기, 장관\nbeggar\t거지\nshepherd\t양치기\nfable\t우화\ntongue\t혀\ndeparture\t출국\nentrance\t입구\nmethod\t방법\naptitude\t적성\nvictory\t승리\nchain\t사슬, 연쇄\nbillion\t10억\nblossom\t꽃, 꽃을 피우다\npraise\t칭찬하다\nwind\t바람\nrequire\t요구하다\ntremble\t떨다, 흔들리다\nstarve\t굶주리다\nquit\t그만두다\nspoil\t망치다\npunish\t벌하다\ntranslate\t번역하다, 바꾸다\nwealthy\t부유한\ndependent\t의존적인\nmild\t온화한\nharsh\t혹독한\ninformal\t비공식적인\nlunar\t달의\noverseas\t해외의\nclient\t고객\nclown\t광대\nimmigrant\t이주자, 이민자\ndragon\t용\nnail\t손톱, 못\nbaggage\t짐, 수화물\nlabel\t라벨을 붙이다\ncoal\t석탄\nbubble\t거품\nbug\t벌레, 곤충\ndawn\t새벽\ndetail\t세부사항\nplenty\t많은\ndelight\t기쁨, 즐거움\ndispute\t논쟁(반박)하다\nflame\t불꽃, 화염\nflash\t번쩍이다, 섬광\nregret\t후회하다\nbless\t축복하다\nspell\t철자를 쓰다\nsurround\t둘러싸다\nswear\t맹세하다\nwander\t헤매다, 방랑하다\ngenerous\t관대한\ngrateful\t감사하는\ninstant\t즉각적인\nmedium\t중간, 매체\nneedy\t가난한, 어려운\nillegal\t불법적인\neither\t또한, 역시\ncounselor\t고문, 상담자\nopportunity\t기회\nliterature\t문학\nillusion\t환상, 환각\nleisure\t여가\nshuttle\t왕복선\nlocation\t위치\nlaundry\t세탁물\ngerm\t병균\nlength\t길이\nrelation\t관계\nsimilarity\t유사\nsort\t분류하다\nrental\t임대, 임대료\ncommercial\t상업적인\nideal\t이상적인\ncomplex\t복잡한\njunior\t손아래의, 후배의\nshut\t닫다, 막다\nbore\t지루하게 하다\ncompose\t작문(작곡)하다\nmend\t고치다, 수선하다\ninform\t알리다, 공지하다\ncalculate\t계산하다\nordinary\t평범한\nselfish\t이기적인\nstrict\t엄격한\nsour\t신, 신맛의\nsolar\t태양의\nneither\t둘 다 ~아닌\nappetite\t식욕\nbeast\t짐승\npalm\t손바닥\nlab\t연구실, 실험실\ninstitute\t교육기관\njournalism\t언론\noutline\t개요, 윤곽\ncrosswalk\t교차로\nlyrics\t가사\ncharm\t매력, 주문\nforce\t힘, 동력\nfunction\t기능, 기능하다\ncontrast\t대조, 대비\nassist\t돕다, 지원하다\nemploy\t고용(사용)하다\ngovern\t통치(지배)하다\nentertain\t즐겁게 하다\ncriticize\t비판하다\nindicate\t가리키다\nreact\t반응하다\ndare\t감히 ~하다\nobvious\t명백한, 뻔한\nsatisfactory\t만족\nconfident\t자신감 있는\nproper\t적절한\ntypical\t전형적인\nouter\t외부의\nextracurricular\t과외의\nunderwater\t수중의\nfairly\t공정히, 꽤, 상당히\nconductor\t지휘자\ncourt\t법정, 경기장\ndictation\t명령, 지시, 받아쓰기\njam\t잼, 정체\nstring\t끈, 줄\nsalary\t급여\nscale\t규모, 비늘, 저울\nspot\t지점, 식별하다\nshame\t부끄러움, 수치\nchemistry\t화학\nimport\t수입하다\nload\t짐을 싣다\nlink\t연결하다\nassistant\t조수, 보조\nliquid\t액체\nsolid\t고체, 딱딱한\nevil\t악, 악의\nsnap\t덥석 물다, 낚아채다\npossess\t소유하다\ncontribute\t기여(공헌)하다\nrecover\t회복하다\nignore\t무시하다\ndiligent\t근면한, 성실한\npale\t창백한\nbrief\t간단한, 간략한\nrare\t드문, 희귀한\ngenetic\t유전의, 유전자의\norganic\t유기농의\nholy\t신성한\nunfortunately\t불행히도\nanniversary\t기념일\nnutrient\t영양분\ngrain\t곡물\ndocument\t문서\nlicense\t면허, 면허증\nblackboard\t칠판\nchalk\t분필\ndepartment\t부서\nfortune\t운, 큰 재산\nresource\t자원\nhunger\t배고픔, 굶주림\nerror\t오류, 실수\njail\t감옥\nprotein\t단백질\nrequest\t요청, 요청하다\nbomb\t폭탄\npoison\t독\nwound\t상처, 부상\nchase\t쫓다, 추적하다\nafford\t~할 여유가 있다\nabsorb\t흡수하다\nattach\t부착(첨부)하다\ncooperate\t협력하다\ndefend\t방어하다\nbe aware of\t~를 인식하다\nprecious\t귀중한\npolitical\t정치적인\nnuclear\t핵의, 원자력의\nindoor\t실내의\naloud\t크게\natmosphere\t대기권, 분위기\nvoyage\t여행, 항해\nnavy\t해군\ninstrument\t도구, 악기\ntube\t관, 튜브\nleather\t가죽\njewel\t보석\nmud\t진흙\ntarget\t목표, 과녁\naspect\t측면\nanger\t분노\niron\t철, 다림질하다\ncomment\t논평하다\nprotest\t항의하다\nconcern\t염려하다\ndump\t버리다, 폐기하다\nenable\t~할 수 있게 하다\nannoy\t괴롭히다\ninsist\t주장(고집)하다\ncombine\t조합(결합)하다\nowe\t빚을 지다\ncease\t중단하다\nawake\t깨어나다\nidle\t게으른, 한가한\nprevious\t이전의\nefficient\t효율적인\nrough\t거친, 험한\nsevere\t혹독한\nromantic\t낭만적인\nsometime\t언젠가\ndemocracy\t민주주의\njustice\t정의\nfaith\t신념\nglory\t영광\napology\t사과(사죄)하다\ncrisis\t위기\ndebt\t빚, 채무\ngap\t차이, 간격\nangle\t각도, 관점\ntheory\t이론\nnest\t둥지\nlabor\t노동, 노력\nremark\t비평하다\ncomfort\t편리, 편안\napproach\t접근하다, 접근방식\nstruggle\t애쓰다, 노력하다\ncontent\t내용\nacid\t산\ndiffer\t다르다\ndeserve\t~해 마땅하다\npermit\t허가하다\nforbid\t금지하다\nreject\t거부하다\npure\t순수한\ndumb\t벙어리의, 우둔한\nslight\t약간의\nparticular\t특별한\nfinancial\t재정의\nbe fond of\t~를 좋아하다\naboard\t배(비행기)에 탄\nidentity\t동일, 정체, 신원\ndevil\t악마, 악마의\nspectator\t관객, 구경꾼\nrecreation\t오락, 기분전환\nincome\t수입\ntax\t세금\nfee\t요금\nfuel\t연료\nburden\t짐, 부담\nselection\t선택, 선별\nsum\t총계, 요약하다\nprofit\t이윤\nprocess\t과정, 절차, 가공하다\nexit\t출구, 나가다\npurchase\t구매하다\ndefeat\t물리치다, 패배시키다\npersuade\t설득하다\nemphasize\t강조하다\naccuse\t고소(비난)하다\ninvestigate\t조사하다\ndistinguish\t구별하다\nadopt\t채택(입양)하다\nusual\t평범한, 보통의\nprimary\t주요한, 제1의\nsufficient\t충분한\naccurate\t정확한\ncomplicated\t복잡한\nartificial\t인공의\ntropical\t열대의\nhardly\t거의 ~아닌\npupil\t제자, 동공\nservant\t하인, 시종\nprofession\t직업, 선언\noccupation\t직업, 거주\nsurgery\t수술\ninstruction\t지시, 교육\nprinciple\t원리, 원칙\nrevolution\t혁명\nauthority\t권위, 공공기관\nrank\t등급, 평가하다\nproperty\t재산\nadvantage\t유리, 이익\naffair\t일, 사건\noccasion\t경우, 근거\npropose\t제안하다\napprove\t승인하다\nadmit\t인정하다\nconduct\t지휘(실행)하다\nreserve\t보존(예약)하다\nreveal\t드러내다\nextend\t확장하다\ninvolve\t포함하다\ndefinite\t뚜렷한, 명백한\nsignificant\t중요한, 상당한\nvital\t생명의, 중대한\nextreme\t극단적인\nacademic\t학구적인\nguilty\t유죄의\nconscious\t의식적인\ngenerally\t일반적으로\nmankind\t인류\npoet\t시인\ndetective\t탐정\nconsumer\t소비자\nchef\t요리사\nwage\t임금, 급료\nsteel\t강철\ndevice\t장치, 설비\npill\t알약\nceiling\t천장\naisle\t통로, 복도\nappearance\t외모\ndestination\t목적지\nsweat\t땀을 흘리다\nswitch\t바꾸다, 전환하다\ngrab\t움켜쥐다\nplain\t평범한, 평원\ngiant\t거인, 거대한\nfound\t설립하다, 세우다\nseek\t찾다, 구하다\nfog\t안개\nswing\t흔들다, 그네\ncancel\t취소하다\navoid\t회피하다\npermanent\t영구적인\ntemporary\t일시적인\nsteep\t가파른\nlogical\t논리적인\nridiculous\t우스운\nstairway\t계단",
+acad:"feed\t(동) 먹이를 주다 (명) 먹이\nlesson\t(명) 수업, 교훈\nmonster\t(명) 괴물\nhelpful\t(형) 도움이 되는\nnature\t(명) 자연\nferry\t(명) 여객선, 나룻배\nasleep\t(형) 잠든\nparent\t(명) 부모\nhalf\t(명) 절반, 반\nperson\t(명) 사람\nabout\t(전) ~에 관하여 (부) 약, 대략\nhabit\t(명) 습관\ntravel\t(동) 여행하다 (명) 여행\nhide\t(동) 숨다, 숨기다\npiece\t(명) 조각, 한 개\nair\t(명) 공기\ngiant\t(명) 거인 (형) 거대한\nchase\t(동) 뒤쫓다, 추격하다\nwelcome\t(동) 환영하다 (형) 환영받는\nbeautiful\t(형) 아름다운\naddress\t(명) 주소\nmember\t(명) 회원, 구성원\nboth\t(대) 둘 다\nspecial\t(형) 특별한\nlovely\t(형) 사랑스러운, 아름다운\nparrot\t(명) 앵무새\nfootprint\t(명) 발자국\nshell\t(명) 조개껍데기, 껍질\ndaily\t(형) 매일의, 일상의\nnest\t(명) 둥지\ngift\t(명) 선물\nlick\t(동) 핥다\nexercise\t(명) 운동 (동) 운동하다\nfar\t(부) 멀리 (형) 먼\nbloom\t(동) 꽃이 피다 (명) 꽃\nisland\t(명) 섬\nworld\t(명) 세계\nmad\t(형) 화난, 미친\nworry\t(동) 걱정하다 (명) 걱정\nask\t(동) 묻다, 요청하다\nblood\t(명) 피, 혈액\ninsect\t(명) 곤충\ndentist\t(명) 치과 의사\nstrange\t(형) 이상한, 낯선\nnote\t(명) 메모, 쪽지 (동) 적어 두다\nuntil\t(전·접) ~까지\nmuddy\t(형) 진흙투성이의\nstick\t(명) 막대기 (동) 붙이다, 찌르다\ncaptain\t(명) 선장, 대장, 주장\neach\t(형) 각각의 (대) 각각\nchore\t(명) 허드렛일, 집안일\nbathtub\t(명) 욕조\nspray\t(동) 뿌리다 (명) 분무기, 스프레이\naction\t(명) 행동, 동작\npillow\t(명) 베개\nshy\t(형) 수줍음이 많은\nwrap\t(동) 싸다, 포장하다\nhomework\t(명) 숙제\nage\t(명) 나이\nbored\t(형) 지루해하는\ncurve\t(명) 곡선 (동) 구부러지다\nmole\t(명) 두더지, 점\nfur\t(명) (동물의) 털\nvillage\t(명) 마을\nhour\t(명) 시간(60분)\nhold\t(동) 잡다, 들고 있다, 개최하다\nearly\t(형·부) 이른, 일찍\nstage\t(명) 무대, 단계\nterrible\t(형) 끔찍한\nhiccup\t(명) 딸꾹질 (동) 딸꾹질하다\nkill\t(동) 죽이다\npair\t(명) 한 쌍, 켤레\npeanut\t(명) 땅콩\neverywhere\t(부) 어디에나, 모든 곳에\nmore\t(형·부) 더 많은, 더\nnickname\t(명) 별명\nthrough\t(전) ~을 통과하여, ~을 통해\nbounce\t(동) 튀다, 튀어 오르다\ntomorrow\t(명·부) 내일\nrise\t(동) 오르다, 떠오르다\nsketch\t(명) 스케치, 밑그림 (동) 스케치하다\njeans\t(명) 청바지\nsafe\t(형) 안전한 (명) 금고\nmodel\t(명) 모형, 모델\nson\t(명) 아들\npay\t(동) 지불하다\nfill\t(동) 채우다\nfocus\t(명) 초점 (동) 집중하다\nartist\t(명) 예술가, 화가\ncheap\t(형) 값싼\ntour\t(명) 관광, 여행 (동) 관광하다\nwrong\t(형) 틀린, 잘못된\nluck\t(명) 행운\nbucket\t(명) 양동이\nbranch\t(명) 나뭇가지, 지점\nsome\t(형) 약간의, 몇몇의\nsnore\t(동) 코를 골다\nrectangle\t(명) 직사각형\ncucumber\t(명) 오이\nyard\t(명) 마당, 뜰, 야드(길이 단위)\neverything\t(대) 모든 것\nperfect\t(형) 완벽한\nplum\t(명) 자두\ncurly\t(형) 곱슬곱슬한\nsoda\t(명) 탄산음료\nsave\t(동) 구하다, 저축하다, 아끼다\npress\t(동) 누르다\nfinally\t(부) 마침내\ntiny\t(형) 아주 작은\nhusband\t(명) 남편\nrole\t(명) 역할\nhealth\t(명) 건강\nripe\t(형) (과일이) 익은\narea\t(명) 지역, 면적\nflour\t(명) 밀가루\nnervous\t(형) 긴장한, 불안한\npractice\t(동·명) 연습(하다)\ncloth\t(명) 천, 옷감\nset\t(동) 놓다, 설정하다 (명) 세트\nenter\t(동) 들어가다, 입력하다\ncontest\t(명) 대회, 경연\nribbon\t(명) 리본\nwaist\t(명) 허리\ntrue\t(형) 사실인, 참된\nsquirrel\t(명) 다람쥐\nfever\t(명) 열\nchoose\t(동) 고르다, 선택하다\nearth\t(명) 지구, 땅\nchocolate\t(명) 초콜릿\nactor\t(명) 배우\nsimple\t(형) 간단한, 단순한\nlater\t(부) 나중에\nmail\t(명) 우편, 우편물 (동) 우편으로 보내다\npart\t(명) 부분, 역할\nginger\t(명) 생강\nguess\t(동) 추측하다 (명) 추측\nyawn\t(동) 하품하다\nbump\t(동) 부딪치다 (명) 혹, 충돌\nscare\t(동) 겁주다 (명) 놀람\nhonk\t(동) (경적을) 빵빵 울리다\nvet\t(명) 수의사\ntoothache\t(명) 치통\nfavorite\t(형) 가장 좋아하는\nexpensive\t(형) 비싼\nburp\t(동) 트림하다 (명) 트림\nuseful\t(형) 유용한\nmean\t(동) 의미하다 (형) 못된, 심술궂은\nbeef\t(명) 소고기\nproud\t(형) 자랑스러운\nstraw\t(명) 빨대, 짚\nswimsuit\t(명) 수영복\ngoal\t(명) 목표, (경기의) 골\nown\t(형) 자신의 (동) 소유하다\nslice\t(명) 조각 (동) 얇게 썰다\nprince\t(명) 왕자\nwaste\t(동) 낭비하다 (명) 낭비, 쓰레기\nusually\t(부) 보통, 대개\npower\t(명) 힘, 권력, 전력\nlie\t(명·동) 거짓말(하다) (동) 눕다\nabove\t(전) ~보다 위에\nspot\t(명) 장소, 점, 얼룩 (동) 발견하다\nmarble\t(명) 구슬, 대리석\nstay\t(동) 머무르다\nstarfish\t(명) 불가사리\ndear\t(형) 소중한, (편지에서) ~에게\nhang\t(동) 걸다, 매달리다\nprincess\t(명) 공주\ncolorfully\t(부) 다채롭게, 화려하게\nmind\t(명) 마음, 정신 (동) 꺼리다, 신경 쓰다\ngarbage\t(명) 쓰레기\naway\t(부) 멀리, 떨어져\nreply\t(동·명) 답하다, 대답\nmoment\t(명) 순간\nstraight\t(형·부) 곧은, 똑바로\nsilk\t(명) 비단, 실크\ncenter\t(명) 중심, 중앙\nremember\t(동) 기억하다\nrub\t(동) 문지르다, 비비다\nall\t(형·대) 모든, 모두\nskateboard\t(명) 스케이트보드\nlucky\t(형) 운이 좋은\nprice\t(명) 가격\nscore\t(명) 점수 (동) 득점하다\njellyfish\t(명) 해파리\nshoot\t(동) 쏘다, 슛하다\nocean\t(명) 대양, 바다\nempty\t(형) 빈 (동) 비우다\nyell\t(동) 소리치다\ngrab\t(동) 움켜잡다\npumpkin\t(명) 호박\nheart\t(명) 심장, 마음\nvisitor\t(명) 방문객\nvoice\t(명) 목소리\npass\t(동) 지나가다, 건네주다, 합격하다\ntool\t(명) 도구\npattern\t(명) 무늬, 패턴\nwig\t(명) 가발\nmiddle\t(명) 가운데 (형) 중간의\nmeeting\t(명) 회의, 모임\nmold\t(명) 곰팡이, 틀\nbin\t(명) 쓰레기통, 저장통\nmachine\t(명) 기계\ndiary\t(명) 일기\nwish\t(동·명) 바라다, 소원\nthumb\t(명) 엄지손가락\nchew\t(동) 씹다\ncage\t(명) 새장, 우리\nbetween\t(전) ~사이에\nhobby\t(명) 취미\nscream\t(동) 비명을 지르다 (명) 비명\ndaughter\t(명) 딸\nhuge\t(형) 거대한\nneed\t(동) 필요하다 (명) 필요\npast\t(명) 과거 (전) ~을 지나서\nbone\t(명) 뼈\nchopstick\t(명) 젓가락\nfinal\t(형) 마지막의 (명) 결승전\npretty\t(형) 예쁜 (부) 꽤\nspace\t(명) 우주, 공간\ncollect\t(동) 모으다, 수집하다\ndate\t(명) 날짜, 데이트\ncastle\t(명) 성\nhammer\t(명) 망치\ngold\t(명) 금\nthroat\t(명) 목구멍\npresent\t(명) 선물 (형) 현재의, 참석한 (동) 주다, 발표하다\nalien\t(명) 외계인\ncereal\t(명) 시리얼\nbackyard\t(명) 뒷마당\ncough\t(동·명) 기침(하다)\nfew\t(형) 거의 없는 (a few: 몇몇의)\namazing\t(형) 놀라운\npork\t(명) 돼지고기\nfield\t(명) 들판, 밭, 경기장\nawake\t(형) 깨어 있는\nspend\t(동) (돈을) 쓰다, (시간을) 보내다\ndust\t(명) 먼지\nlaugh\t(동) 웃다\norder\t(동·명) 주문(하다), 명령(하다), 순서\nreturn\t(동) 돌아오다, 돌려주다\nbush\t(명) 덤불\ncreate\t(동) 만들다, 창조하다\nshadow\t(명) 그림자\nfamous\t(형) 유명한\nticket\t(명) 표, 티켓\nrich\t(형) 부유한\nforget\t(동) 잊다\nknife\t(명) 칼\nlay\t(동) 놓다, (알을) 낳다\ndaytime\t(명) 낮\nwife\t(명) 아내\ngorilla\t(명) 고릴라\npicnic\t(명) 소풍\ncouch\t(명) 소파\npage\t(명) 쪽, 페이지\nitem\t(명) 물품, 항목\nnothing\t(대) 아무것도 ~ 아닌 것\ncost\t(동) 비용이 들다 (명) 값, 비용\nexpress\t(동) 표현하다 (형) 급행의\ncountry\t(명) 나라, 시골\nfeather\t(명) 깃털\nalive\t(형) 살아 있는\nlamb\t(명) 어린 양\ncareful\t(형) 조심하는\ntickle\t(동) 간지럽히다\nexpression\t(명) 표현, 표정\nway\t(명) 길, 방법\nmarry\t(동) 결혼하다\ndelicious\t(형) 맛있는\nspeed\t(명) 속도\ncartoon\t(명) 만화\nclear\t(형) 맑은, 분명한 (동) 치우다\nmitten\t(명) 벙어리장갑\nfence\t(명) 울타리\ntea\t(명) 차\nrock\t(명) 바위, 록 음악\nmoth\t(명) 나방\nfollow\t(동) 따라가다, 따르다\nhealthy\t(형) 건강한\nmedicine\t(명) 약\nbell\t(명) 종\ncrosswalk\t(명) 횡단보도\ntube\t(명) 관, 튜브\nfuture\t(명) 미래\nhappen\t(동) 일어나다, 발생하다\nyogurt\t(명) 요구르트\nhairdo\t(명) 머리 모양\narrive\t(동) 도착하다\ncube\t(명) 정육면체\ndead\t(형) 죽은\nfront\t(명) 앞, 앞쪽\nexcellent\t(형) 훌륭한, 뛰어난\nalone\t(형·부) 혼자(서)\nminute\t(명) 분(시간) (형) 아주 작은\nserve\t(동) 제공하다, 음식을 내다\nview\t(명) 경치, 전망, 견해\nburn\t(동) 타다, 태우다\nnecklace\t(명) 목걸이\nsmelly\t(형) 냄새나는\nchain\t(명) 사슬, 체인\nlift\t(동) 들어 올리다\ngentle\t(형) 부드러운, 상냥한\nslipper\t(명) 슬리퍼\nlettuce\t(명) 상추\nstretch\t(동) 늘이다, 기지개를 켜다\nceiling\t(명) 천장\nnail\t(명) 못, 손톱\nfix\t(동) 고치다, 고정하다\nhuman\t(명) 인간\nmosquito\t(명) 모기\noval\t(명·형) 타원형(의)\ndecide\t(동) 결정하다\nheat\t(명) 열, 더위\nchance\t(명) 기회, 가능성\nweekend\t(명) 주말\nthick\t(형) 두꺼운, 굵은, 진한\nenvy\t(동) 부러워하다 (명) 부러움\nplanet\t(명) 행성\nreal\t(형) 진짜의\ncity\t(명) 도시\ncarpet\t(명) 카펫\ndrawer\t(명) 서랍\nborrow\t(동) 빌리다\ntrick\t(명) 속임수, 묘기\nfloppy\t(형) 축 늘어진\nmagician\t(명) 마술사\ncarefully\t(부) 조심스럽게\nchest\t(명) 가슴, 큰 상자\ngate\t(명) 문, 대문\nproblem\t(명) 문제\nevent\t(명) 행사, 사건\ngrowl\t(동) 으르렁거리다\nlist\t(명) 목록\nsmart\t(형) 똑똑한\nwipe\t(동) 닦다\nless\t(형·부) 더 적은, 덜\ncheck\t(동) 확인하다, 검사하다\nsail\t(동) 항해하다 (명) 돛\nsquare\t(명) 정사각형, 광장\nsauce\t(명) 소스\nseason\t(명) 계절\nbadminton\t(명) 배드민턴\ngroup\t(명) 집단, 무리\nugly\t(형) 못생긴, 추한\ncart\t(명) 수레, 카트\nbeat\t(동) 이기다, 두드리다 (명) 박자\nnap\t(명) 낮잠\nmeal\t(명) 식사\ndot\t(명) 점\nstamp\t(명) 우표, 도장\nvalley\t(명) 계곡\nskinny\t(형) 마른\nbottom\t(명) 맨 아래, 바닥\nfreeze\t(동) 얼다, 얼리다\nmunch\t(동) 우적우적 먹다\nevery\t(형) 모든, ~마다\nspill\t(동) 엎지르다\nfinish\t(동) 끝내다\ncomb\t(명) 빗 (동) 빗다\nsunlight\t(명) 햇빛\ndie\t(동) 죽다\nphone\t(명) 전화\nplastic\t(명) 플라스틱\nscience\t(명) 과학\nmailbox\t(명) 우편함\nbetter\t(형·부) 더 좋은, 더 잘\ndesert\t(명) 사막 (동) 버리다\nfight\t(동) 싸우다 (명) 싸움\ntip\t(명) 팁, 조언, (뾰족한) 끝\nmission\t(명) 임무\nmeaning\t(명) 의미\nknock\t(동) 두드리다, 노크하다\ndangerous\t(형) 위험한\nhorn\t(명) 뿔, 경적\nflat\t(형) 평평한\ntriangle\t(명) 삼각형\nquestion\t(명) 질문\nmuscle\t(명) 근육\ninvent\t(동) 발명하다\nfold\t(동) 접다\noffice\t(명) 사무실\npajamas\t(명) 잠옷\nvacation\t(명) 방학, 휴가\ncozy\t(형) 아늑한\ncliff\t(명) 절벽\nleave\t(동) 떠나다, 남기다\nclick\t(동·명) 클릭(하다), 딸깍 소리\nwashroom\t(명) 화장실\nseashell\t(명) 조개껍데기\nbumpy\t(형) 울퉁불퉁한\nnet\t(명) 그물, 네트\nhope\t(동) 희망하다 (명) 희망\nmain\t(형) 주된, 주요한\nexample\t(명) 예, 보기\nastronaut\t(명) 우주 비행사\nnear\t(형·전) 가까운, ~근처에\nhike\t(동·명) 도보 여행(하다), 하이킹\nhistory\t(명) 역사\nguide\t(명) 안내자 (동) 안내하다\nwriter\t(명) 작가\nheadache\t(명) 두통\ncurious\t(형) 호기심 많은\nsailor\t(명) 선원\nalong\t(전) ~을 따라\nthirsty\t(형) 목마른\ngreet\t(동) 인사하다\ndessert\t(명) 디저트, 후식\nfancy\t(형) 화려한 (동) 좋아하다\nelevator\t(명) 엘리베이터\nreach\t(동) 도달하다, 손이 닿다\nsouth\t(명) 남쪽\nrope\t(명) 밧줄\nbest\t(형) 최고의\nbehind\t(전) ~뒤에\nfog\t(명) 안개\nswat\t(동) (파리 등을) 찰싹 때리다\npoint\t(동) 가리키다 (명) 요점, 점수\nbuzz\t(동) 윙윙거리다\nsurprised\t(형) 놀란\ncare\t(명) 돌봄, 조심 (동) 신경 쓰다, 돌보다\nbandage\t(명) 붕대\nmusical\t(형) 음악의 (명) 뮤지컬\npepper\t(명) 후추, 고추\nlonely\t(형) 외로운\nletter\t(명) 편지, 글자\nmane\t(명) (사자·말의) 갈기\nenough\t(형) 충분한\nclap\t(동) 박수 치다\ndifficult\t(형) 어려운\nsilver\t(명) 은\nuniform\t(명) 제복, 교복\nbelieve\t(동) 믿다\nitchy\t(형) 가려운\nroot\t(명) 뿌리\npocket\t(명) 주머니\nstation\t(명) 역, 정거장\nconcert\t(명) 콘서트\nsteal\t(동) 훔치다\nexit\t(명) 출구\nrest\t(명·동) 휴식(하다) (명) 나머지\nmermaid\t(명) 인어\npile\t(명) 더미 (동) 쌓다\nblink\t(동) 눈을 깜박이다\nspoonful\t(명) 한 숟가락(의 양)\nahead\t(부) 앞으로, 앞에\nairport\t(명) 공항\nduring\t(전) ~동안\ndiamond\t(명) 다이아몬드\ncrop\t(명) 농작물\nhint\t(명) 힌트, 암시\nsecond\t(명) 초(시간) (형) 두 번째의\nsubject\t(명) 과목, 주제\nnewspaper\t(명) 신문\nwant\t(동) 원하다\nfairy\t(명) 요정\nsoil\t(명) 흙\ngiggle\t(동) 킥킥 웃다\nconnect\t(동) 연결하다\nsword\t(명) 검, 칼\nfart\t(명·동) 방귀(를 뀌다)\nspell\t(동) 철자를 쓰다 (명) 마법\ncurtain\t(명) 커튼\nrooftop\t(명) 옥상\nshower\t(명) 샤워, 소나기\ntoilet\t(명) 변기, 화장실\ncreamy\t(형) 크림 같은, 부드러운\nfirewood\t(명) 장작\nlevel\t(명) 수준, 단계, 층\nhandsome\t(형) 잘생긴\nsponge\t(명) 스펀지\nhero\t(명) 영웅\nstinky\t(형) 고약한 냄새가 나는\nrule\t(명) 규칙\nhurt\t(동) 다치게 하다, 아프다\nnorth\t(명) 북쪽\ncrawl\t(동) 기어가다\nfloat\t(동) 뜨다\nclerk\t(명) 점원, 직원\nplan\t(명·동) 계획(하다)\nwhisper\t(동) 속삭이다\nlock\t(동) 잠그다 (명) 자물쇠\nmessage\t(명) 메시지\ncrispy\t(형) 바삭바삭한\nstripe\t(명) 줄무늬\ncrown\t(명) 왕관\nfantastic\t(형) 환상적인\nstir\t(동) 휘젓다, 섞다\noften\t(부) 자주\nfingernail\t(명) 손톱\nsquid\t(명) 오징어\nchop\t(동) 썰다, 자르다\njoy\t(명) 기쁨\nhonest\t(형) 정직한\ntired\t(형) 피곤한\naddition\t(명) 덧셈, 추가\nunderstand\t(동) 이해하다\nchange\t(동) 바꾸다 (명) 변화, 거스름돈\nswing\t(동) 흔들리다 (명) 그네\ndrill\t(명) 드릴, 반복 훈련\nscientist\t(명) 과학자\nground\t(명) 땅, 지면\ntoothbrush\t(명) 칫솔\nshovel\t(명) 삽\nquiet\t(형) 조용한\nflip\t(동) 뒤집다\nfan\t(명) 선풍기, 팬(애호가)\nrectangular\t(형) 직사각형의\njoin\t(동) 가입하다, 함께하다\nanswer\t(명·동) 대답(하다), 정답\nspaceship\t(명) 우주선\ntale\t(명) 이야기\nrooster\t(명) 수탉\nposter\t(명) 포스터\nspicy\t(형) 매운\ntissue\t(명) 휴지, 티슈\nsolve\t(동) 해결하다, (문제를) 풀다\nyesterday\t(명·부) 어제\nband\t(명) 밴드, 띠\nstrike\t(동) 치다, 때리다, 파업하다\nwest\t(명) 서쪽\nrinse\t(동) 헹구다\ntongue\t(명) 혀\npine\t(명) 소나무\nsafari\t(명) 사파리\nsurprise\t(동) 놀라게 하다 (명) 놀라움\nbrim\t(명) (컵의) 위끝부분,(모자의) 챙, (그릇의) 가장자리\npopular\t(형) 인기 있는\nhunter\t(명) 사냥꾼\nkey\t(명) 열쇠, 핵심\ntape\t(명) 테이프\ncorrect\t(형) 맞는 (동) 바로잡다\nenergy\t(명) 에너지, 힘, 기운\ncupboard\t(명) 찬장\nsize\t(명) 크기\nflashlight\t(명) 손전등\nsecret\t(명) 비밀\nexperiment\t(명) 실험\ngrain\t(명) 곡물\npromise\t(명·동) 약속(하다)\ncause\t(명) 원인 (동) 일으키다\nearthworm\t(명) 지렁이\nblind\t(형) 눈먼\nsaw\t(명) 톱 (see의 과거) 보았다\ntie\t(동) 묶다 (명) 넥타이\nghost\t(명) 유령\nimportant\t(형) 중요한\nhockey\t(명) 하키\nsubway\t(명) 지하철\nhen\t(명) 암탉\nthird\t(형) 세 번째의\nbelow\t(전) ~아래에\nstory\t(명) 이야기\ncrash\t(동·명) 충돌(하다)\nalarm\t(명) 경보, 알람\nzigzag\t(명) 지그재그\nshape\t(명) 모양\ninterest\t(명) 흥미, 이자\nmatch\t(명) 경기, 성냥 (동) 어울리다\nmiss\t(동) 놓치다, 그리워하다\ncalm\t(형) 침착한, 고요한\neast\t(명) 동쪽\nspread\t(동) 펴다, 퍼지다\nfingerprint\t(명) 지문\nzoom\t(동) 확대하다, 쌩 지나가다\nstem\t(명) (식물의) 줄기\nsale\t(명) 판매, 할인\ntoothpaste\t(명) 치약\nraise\t(동) 올리다, 기르다\ndip\t(동) 살짝 담그다\nnoise\t(명) 소음\ndairy\t(형) 유제품의 (명) 유제품\nnarrow\t좁은\nshine\t빛나다, 반짝이다.\nchameleon\t카멜레온\ntrouble\t문제, 골칫거리\ncover\t씌우다, 덮다\nprize\t상\nmushroom\t버섯\nresult\t결과\nago\t~전에\nexam\t(명) 시험\nwheel\t(명) 바퀴\nsplash\t(동) 튀기다 (명) 첨벙 소리\nmess\t(명) 엉망, 어질러진 상태\nsilly\t(형) 어리석은\nwave\t(명) 파도 (동) 손을 흔들다\nsigh\t(명·동) 한숨(을 쉬다)\nalligator\t(명) 악어\ntorch\t(명) 횃불, (영국) 손전등\nmusician\t(명) 음악가\naward\t(명) 상\ndiscover\t(동) 발견하다\nweight\t(명) 무게\ntasty\t(형) 맛있는\nstep\t(명) 걸음, 단계\nangel\t(명) 천사\nsurprisingly\t(부) 놀랍게도\nclip\t(명) 클립, 핀\njoke\t(명) 농담\npeel\t(동) 껍질을 벗기다 (명) 껍질"
+};
+
+const MODES = {
+  elem:{label:'초등 800', secSize:100000, day:20, unitName:'Day', unit:'알파벳순 20개씩'},
+  mid:{label:'중등 1800', secSize:100000, day:60, unitName:'Day', unit:'Day 60개씩'},
+  acad:{label:'2CC VOCA', secSize:100000, day:20, unitName:'Unit', unit:'Unit 20개씩'}
+};
+const MODE_KEYS = ['elem','mid','acad'];
+const STORE = 'voca-crossword-v2';
+const HINT_MAX = 3;
+
+const $ = id => document.getElementById(id);
+const S = {
+  mode:'elem', lists:{}, custom:{elem:false,mid:false,acad:false},
+  sec:0, from:1, to:1, count:10, first:false,
+  puz:null, ans:[], lock:[], mark:[], nodes:[], clueEls:[],
+  sel:{x:0,y:0,dir:0}, t0:0, elapsed:0, timer:null, solved:false, revealed:false, hints:0, hintLeft:3, counted:false
+};
+
+function builtinList(key){ return parseText(DATA[key],true).entries; }
+
+/* ---------- storage (per-browser convenience only) ---------- */
+function save(){
+  try{
+    const o={prefs:{mode:S.mode,count:S.count,first:S.first},lists:{}};
+    MODE_KEYS.forEach(k=>{ if(S.custom[k]) o.lists[k]=S.lists[k].map(e=>[e.w,e.k]); });
+    localStorage.setItem(STORE,JSON.stringify(o));
+  }catch(e){}
+}
+function load(){
+  MODE_KEYS.forEach(k=>{ S.lists[k]=builtinList(k); });
+  try{
+    const raw=localStorage.getItem(STORE); if(!raw) return;
+    const o=JSON.parse(raw);
+    MODE_KEYS.forEach(k=>{
+      const l=o.lists&&o.lists[k];
+      if(Array.isArray(l)&&l.length>=5){ S.lists[k]=l.map(p=>mk(p[0],p[1])); S.custom[k]=true; }
+    });
+    if(o.prefs){
+      if(MODES[o.prefs.mode]) S.mode=o.prefs.mode;
+      if([6,8,10,12,15,20,25].indexOf(o.prefs.count)>-1) S.count=o.prefs.count;
+      S.first=!!o.prefs.first;
+    }
+  }catch(e){}
+}
+
+/* ---------- pool / ranges ---------- */
+function secEntries(){
+  const m=MODES[S.mode], list=S.lists[S.mode], a=S.sec*m.secSize;
+  return list.slice(a,a+m.secSize);
+}
+function secCount(){ return Math.max(1,Math.ceil(S.lists[S.mode].length/MODES[S.mode].secSize)); }
+function dayN(){ return MODES[S.mode].day; }
+function dayCount(){ return Math.max(1,Math.ceil(secEntries().length/dayN())); }
+function pool(){ return secEntries().slice((S.from-1)*dayN(),S.to*dayN()).filter(e=>e.ok); }
+function dayNo(i){ const m=MODES[S.mode]; return S.mode==='acad'?S.sec*(m.secSize/m.day)+i:i; }
+function dayLabel(i){
+  const m=MODES[S.mode], es=secEntries(), a=(i-1)*m.day, b=Math.min(i*m.day,es.length), off=S.mode==='acad'?S.sec*m.secSize:0;
+  if(S.mode==='elem') return 'Day '+i+' · '+es[a].w.split(' ')[0]+' – '+es[b-1].w.split(' ')[0];
+  if(S.mode==='acad') return 'Unit '+dayNo(i)+' ('+(a+1+off)+'–'+(b+off)+')';
+  return 'Day '+i+' ('+(a+1)+'–'+b+')';
+}
+
+/* ---------- settings UI ---------- */
+function renderModes(){
+  const box=$('modes'); box.textContent='';
+  MODE_KEYS.forEach(k=>{
+    const m=MODES[k], b=document.createElement('button');
+    b.type='button'; b.className='mode'; b.setAttribute('role','tab'); b.setAttribute('aria-selected',String(k===S.mode));
+    const t=document.createElement('b'); t.textContent=m.label;
+    const s=document.createElement('small');
+    s.textContent=S.lists[k].length.toLocaleString()+'단어 · '+m.unit+(S.custom[k]?' · 불러옴':'');
+    b.append(t,s);
+    b.addEventListener('click',()=>{ if(S.mode===k) return; S.mode=k; S.sec=0; S.from=1; S.to=1; save(); refreshSettings(); newPuzzle(); });
+    box.appendChild(b);
+  });
+}
+function renderSections(){
+  const n=secCount(), show=S.mode==='acad'&&secCount()>1;
+  $('secField').hidden=!show;
+  if(!show) return;
+  const box=$('secChips'); box.textContent='';
+  for(let i=0;i<n;i++){
+    const b=document.createElement('button'); b.type='button'; b.className='chip';
+    const len=S.lists.acad.slice(i*500,i*500+500).length;
+    b.textContent=(i+1)+'권 · '+len;
+    b.setAttribute('aria-pressed',String(i===S.sec));
+    b.addEventListener('click',()=>{ S.sec=i; S.from=1; S.to=1; refreshSettings(); newPuzzle(); });
+    box.appendChild(b);
+  }
+}
+function renderDays(){
+  const total=secEntries().length, d=dayCount();
+  if(S.from>d) S.from=d; if(S.to>d) S.to=d; if(S.to<S.from) S.to=S.from;
+  ['dayFrom','dayTo'].forEach(id=>{
+    const sel=$(id); sel.textContent='';
+    for(let i=1;i<=d;i++){
+      const o=document.createElement('option'); o.value=i;
+      o.textContent=dayLabel(i);
+      sel.appendChild(o);
+    }
+  });
+  $('dayFrom').value=S.from; $('dayTo').value=S.to;
+  const mm=MODES[S.mode]; $('rangeLabel').textContent='출제 범위 ('+mm.unitName+' = '+mm.day+'단어)';
+}
+function renderCount(){
+  const sel=$('count'); sel.textContent='';
+  [6,8,10,12,15,20,25].forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n+'개'; sel.appendChild(o); });
+  sel.value=S.count; $('first').checked=S.first;
+}
+function renderPool(){
+  const p=pool(), m=MODES[S.mode];
+  const secName=(S.mode==='acad'&&secCount()>1)?(' '+(S.sec+1)+'권'):'';
+  let t=m.label+secName+' · '+m.unitName+' '+dayNo(S.from)+(S.to>S.from?'–'+dayNo(S.to):'')+' · 출제 가능 '+p.length+'단어 중 '+Math.min(S.count,p.length)+'개 출제';
+  $('pool').textContent=t;
+  $('importFor').textContent='적용 대상: '+m.label+(S.custom[S.mode]?' (불러온 단어장 '+S.lists[S.mode].length.toLocaleString()+'개 사용 중)':' (기본 단어장 '+S.lists[S.mode].length.toLocaleString()+'개 사용 중)');
+}
+function refreshSettings(){ renderModes(); renderSections(); renderDays(); renderPool(); }
+
+/* ---------- puzzle state helpers ---------- */
+const cellAt=(x,y)=>S.puz&&S.puz.cells[y]&&S.puz.cells[y][x]||null;
+function cellsOf(i){
+  const wd=S.puz.words[i], out=[];
+  for(let j=0;j<wd.w.length;j++) out.push({x:wd.x+(wd.dir===0?j:0), y:wd.y+(wd.dir===1?j:0)});
+  return out;
+}
+function activeIdx(){
+  const c=cellAt(S.sel.x,S.sel.y); if(!c) return -1;
+  let i=c.d[S.sel.dir];
+  if(i===-1){ i=c.d[1-S.sel.dir]; if(i!==-1) S.sel.dir=1-S.sel.dir; }
+  return i;
+}
+function fmt(s){ const m=Math.floor(s/60), r=s%60; return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'); }
+function setMsg(t){ $('msg').textContent=t||''; }
+
+/* ---------- build ---------- */
+function newPuzzle(){
+  const p=pool();
+  if(p.length<3){ setMsg('이 구간에는 퍼즐에 쓸 수 있는 단어가 3개 미만이에요. Day 범위를 넓혀 주세요.'); return; }
+  const btn=$('newBtn'); btn.disabled=true; btn.textContent='만드는 중…'; setMsg('');
+  setTimeout(()=>{
+    const n=Math.min(S.count,p.length);
+    const sh=shuffle(p.slice());
+    const maxDim=n<=10?12:n<=15?15:n<=20?17:19;
+    const r=buildPuzzle(sh.slice(0,n),sh.slice(n),n,maxDim,550);
+    S.puz=finalize(r);
+    resetState();
+    S.counted=false;
+    buildGrid(); buildClues();
+    const first=S.puz.words.reduce((a,w,i)=>(w.num<S.puz.words[a].num||(w.num===S.puz.words[a].num&&w.dir<S.puz.words[a].dir))?i:a,0);
+    selectWord(first,true);
+    btn.disabled=false; btn.textContent='새 퍼즐 만들기';
+    if(S.puz.words.length<n) setMsg(n+'개 중 '+S.puz.words.length+'개만 배치됐어요. 한 번 더 만들면 더 채워질 수 있어요.');
+    renderPool();
+  },30);
+}
+function resetState(){
+  const P=S.puz;
+  S.ans=Array.from({length:P.H},()=>Array(P.W).fill(''));
+  S.lock=Array.from({length:P.H},()=>Array(P.W).fill(false));
+  S.mark=Array.from({length:P.H},()=>Array(P.W).fill(0));
+  if(S.first){ P.words.forEach(wd=>{ S.ans[wd.y][wd.x]=wd.w[0]; S.lock[wd.y][wd.x]=true; }); }
+  S.solved=false; S.revealed=false; S.hints=0; S.hintLeft=HINT_MAX; S.t0=0; S.elapsed=0;
+  clearInterval(S.timer); S.timer=null;
+  $('banner').hidden=true; cancelCelebrate();
+}
+function buildGrid(){
+  const P=S.puz, g=$('grid'); g.textContent='';
+  g.style.setProperty('--cols',P.W);
+  S.nodes=[];
+  const frag=document.createDocumentFragment();
+  for(let y=0;y<P.H;y++){
+    S.nodes[y]=[];
+    for(let x=0;x<P.W;x++){
+      const c=P.cells[y][x];
+      if(!c){ const v=document.createElement('i'); v.className='v'; frag.appendChild(v); S.nodes[y][x]=null; continue; }
+      const el=document.createElement('div'); el.className='c'; el.dataset.x=x; el.dataset.y=y;
+      if(c.num){ const n=document.createElement('span'); n.className='n'; n.textContent=c.num; el.appendChild(n); }
+      const l=document.createElement('span'); l.className='l'; el.appendChild(l);
+      frag.appendChild(el); S.nodes[y][x]={el,l};
+    }
+  }
+  g.appendChild(frag); fit();
+}
+function fit(){
+  const P=S.puz; if(!P) return;
+  const w=$('gscroll').clientWidth-2;
+  const cs=Math.max(22,Math.min(fsActive()?60:44,Math.floor(w/P.W)));
+  $('grid').style.setProperty('--cs',cs+'px');
+}
+function buildClues(){
+  const P=S.puz; S.clueEls=[];
+  ['across','down'].forEach(id=>{ $(id).textContent=''; });
+  const order=P.words.map((w,i)=>i).sort((a,b)=>P.words[a].num-P.words[b].num);
+  let ac=0, dc=0;
+  order.forEach(i=>{
+    const wd=P.words[i];
+    const li=document.createElement('li'), b=document.createElement('button');
+    b.type='button'; b.className='clue';
+    const n=document.createElement('span'); n.className='cn'; n.textContent=wd.num;
+    const k=document.createElement('span'); k.className='ck'; k.textContent=wd.k||'(뜻 없음)';
+    const l=document.createElement('span'); l.className='cl'; l.textContent=wd.w.length+'자';
+    b.append(n,k,l);
+    b.addEventListener('click',()=>{ selectWord(i); focusKb(); });
+    li.appendChild(b); S.clueEls[i]=b;
+    if(wd.dir===0){ $('across').appendChild(li); ac++; } else { $('down').appendChild(li); dc++; }
+  });
+  $('aCount').textContent=ac; $('dCount').textContent=dc;
+}
+
+/* ---------- painting ---------- */
+function paint(){
+  const P=S.puz; if(!P) return;
+  const ai=activeIdx();
+  const act=new Set();
+  if(ai>=0) cellsOf(ai).forEach(c=>act.add(c.y*100+c.x));
+  let filled=0,total=0;
+  for(let y=0;y<P.H;y++)for(let x=0;x<P.W;x++){
+    const n=S.nodes[y][x]; if(!n) continue;
+    total++;
+    const ch=S.ans[y][x]; if(ch) filled++;
+    n.l.textContent=ch.toUpperCase();
+    n.el.className='c'+(act.has(y*100+x)?' act':'')+((x===S.sel.x&&y===S.sel.y)?' cur':'')+(S.lock[y][x]?' lock':'')+(S.mark[y][x]?' bad':'')+(S.solved?' ok':'');
+  }
+  P.words.forEach((wd,i)=>{
+    const b=S.clueEls[i]; if(!b) return;
+    const full=cellsOf(i).every(c=>S.ans[c.y][c.x]);
+    b.className='clue'+(i===ai?' act':'')+(full?' done':'');
+  });
+  const now=$('now'); now.textContent='';
+  if(ai>=0){
+    const wd=P.words[ai];
+    const bd=document.createElement('span'); bd.className='badge'; bd.textContent=wd.num+' '+(wd.dir===0?'가로':'세로');
+    const tx=document.createElement('span'); tx.className='txt'; tx.textContent=wd.k||'(뜻 없음)';
+    const ln=document.createElement('span'); ln.className='len'; ln.textContent=wd.w.length+'글자';
+    now.append(bd,tx,ln);
+  }
+  $('stat').textContent=filled+'/'+total+'칸 · '+fmt(S.elapsed);
+  const hb=$('letterBtn'); hb.disabled=S.solved||S.hintLeft<=0;
+  $('pips').textContent='●'.repeat(S.hintLeft)+'○'.repeat(HINT_MAX-S.hintLeft);
+  hb.setAttribute('aria-label','한글자 힌트, 남은 기회 '+S.hintLeft+'번');
+}
+
+/* ---------- selection & input ---------- */
+function setSel(x,y,pref){
+  const c=cellAt(x,y); if(!c) return;
+  S.sel.x=x; S.sel.y=y;
+  if(pref!==undefined&&c.d[pref]!==-1) S.sel.dir=pref;
+  else if(c.d[S.sel.dir]===-1) S.sel.dir=1-S.sel.dir;
+}
+function selectCell(x,y){
+  const c=cellAt(x,y); if(!c) return;
+  if(S.sel.x===x&&S.sel.y===y){ if(c.d[0]!==-1&&c.d[1]!==-1) S.sel.dir=1-S.sel.dir; }
+  else setSel(x,y);
+  paint();
+}
+function selectWord(i,silent){
+  const wd=S.puz.words[i]; S.sel.dir=wd.dir;
+  const cs=cellsOf(i);
+  const target=cs.find(c=>!S.ans[c.y][c.x])||cs[0];
+  S.sel.x=target.x; S.sel.y=target.y;
+  paint();
+}
+function nextWord(step){
+  const P=S.puz; if(!P) return;
+  const order=P.words.map((w,i)=>i).sort((a,b)=>(P.words[a].dir-P.words[b].dir)||(P.words[a].num-P.words[b].num));
+  const cur=order.indexOf(activeIdx());
+  selectWord(order[(cur+step+order.length)%order.length]);
+}
+function toggleDir(){
+  const c=cellAt(S.sel.x,S.sel.y);
+  if(c&&c.d[0]!==-1&&c.d[1]!==-1){ S.sel.dir=1-S.sel.dir; paint(); }
+}
+function startTimer(){
+  if(S.timer||S.solved||S.revealed) return;
+  S.t0=Date.now()-S.elapsed*1000;
+  S.timer=setInterval(()=>{ S.elapsed=Math.floor((Date.now()-S.t0)/1000); $('stat').textContent=$('stat').textContent.replace(/\d\d:\d\d$/,fmt(S.elapsed)); },1000);
+}
+function stopTimer(){ clearInterval(S.timer); S.timer=null; }
+function stepInWord(step){
+  const ai=activeIdx(); if(ai<0) return false;
+  const cs=cellsOf(ai), k=cs.findIndex(c=>c.x===S.sel.x&&c.y===S.sel.y), nk=k+step;
+  if(nk<0||nk>=cs.length) return false;
+  S.sel.x=cs[nk].x; S.sel.y=cs[nk].y; return true;
+}
+function putLetter(ch){
+  if(!S.puz||S.solved||S.revealed) return;
+  setMsg(''); startTimer();
+  const {x,y}=S.sel;
+  if(!S.lock[y][x]){ S.ans[y][x]=ch; S.mark[y][x]=0; }
+  let moved=stepInWord(1);
+  while(moved&&S.lock[S.sel.y][S.sel.x]&&stepInWord(1)){}
+  checkSolved(); paint();
+}
+function backspace(){
+  if(!S.puz||S.solved||S.revealed) return;
+  const {x,y}=S.sel;
+  if(S.ans[y][x]&&!S.lock[y][x]){ S.ans[y][x]=''; S.mark[y][x]=0; paint(); return; }
+  if(stepInWord(-1)){
+    while(S.lock[S.sel.y][S.sel.x]&&stepInWord(-1)){}
+    const p=S.sel; if(!S.lock[p.y][p.x]){ S.ans[p.y][p.x]=''; S.mark[p.y][p.x]=0; }
+  }
+  paint();
+}
+function arrow(dx,dy){
+  const P=S.puz; if(!P) return;
+  let x=S.sel.x+dx, y=S.sel.y+dy;
+  while(x>=0&&y>=0&&x<P.W&&y<P.H){
+    if(cellAt(x,y)){ setSel(x,y,dx!==0?0:1); paint(); return; }
+    x+=dx; y+=dy;
+  }
+}
+function checkSolved(){
+  const P=S.puz;
+  for(let y=0;y<P.H;y++)for(let x=0;x<P.W;x++){ const c=P.cells[y][x]; if(c&&S.ans[y][x]!==c.ch) return false; }
+  S.solved=true; stopTimer();
+  S.elapsed=S.t0?Math.floor((Date.now()-S.t0)/1000):S.elapsed;
+  const perfect=S.hints===0&&!S.first;
+  let kind='repeat';
+  if(!S.counted){
+    S.counted=true; stats.complete++; if(perfect) stats.perfect++;
+    saveStats(); renderStats(perfect?['tileComplete','tilePerfect']:['tileComplete']);
+    kind=perfect?'perfect':'complete';
+  }
+  const t=fmt(S.elapsed), n=P.words.length;
+  if(kind==='perfect'){
+    $('bannerTitle').textContent='PERFECT!';
+    $('bannerText').textContent='힌트 없이 완성했어요 · 단어 '+n+'개';
+  } else if(kind==='complete'){
+    const used=[]; if(S.hints) used.push('한글자 힌트 '+S.hints+'번'); if(S.first) used.push('첫 글자 보여주기');
+    $('bannerTitle').textContent='모두 맞혔어요!';
+    $('bannerText').textContent='단어 '+n+'개 · '+used.join(', ')+' 사용 · Perfect는 아니에요';
+  } else {
+    $('bannerTitle').textContent='이미 기록된 퍼즐이에요';
+    $('bannerText').textContent='같은 퍼즐을 다시 풀어도 횟수는 늘지 않아요. 새 퍼즐에 도전해 보세요.';
+  }
+  $('banner').className='banner'+(kind==='perfect'?' perfect':kind==='repeat'?' repeat':'');
+  $('clock').setAttribute('aria-label','걸린 시간 '+t);
+  $('bannerUse').setAttribute('href',kind==='perfect'?'#i-medal':'#i-check');
+  $('banner').hidden=false; setMsg('');
+  celebrate(kind,S.elapsed);
+  return true;
+}
+
+/* ---------- actions ---------- */
+function doCheck(){
+  const P=S.puz; if(!P||S.solved) return;
+  let bad=0, empty=0;
+  for(let y=0;y<P.H;y++)for(let x=0;x<P.W;x++){
+    const c=P.cells[y][x]; if(!c) continue;
+    const a=S.ans[y][x];
+    if(!a){ empty++; continue; }
+    if(a!==c.ch){ S.mark[y][x]=1; bad++; }
+  }
+  setMsg(bad?('틀린 칸이 '+bad+'개 있어요. 빨간 칸을 고쳐 보세요.'):(empty?'지금까지 쓴 글자는 모두 맞아요. 남은 칸 '+empty+'개.':''));
+  paint();
+}
+function doLetter(){
+  if(!S.puz||S.solved) return;
+  if(S.hintLeft<=0){ setMsg('한글자 힌트는 한 판에 '+HINT_MAX+'번만 쓸 수 있어요.'); return; }
+  const need=p=>S.ans[p.y][p.x]!==cellAt(p.x,p.y).ch;
+  const cur={x:S.sel.x,y:S.sel.y};
+  let t=null;
+  if(cellAt(cur.x,cur.y)&&need(cur)) t=cur;
+  else { const ai=activeIdx(); if(ai>=0) t=cellsOf(ai).find(need)||null; }
+  if(!t){ setMsg('이 단어는 이미 다 맞게 채워졌어요. 다른 단어를 골라 보세요.'); return; }
+  S.sel.x=t.x; S.sel.y=t.y;
+  S.ans[t.y][t.x]=cellAt(t.x,t.y).ch; S.lock[t.y][t.x]=true; S.mark[t.y][t.x]=0;
+  S.hints++; S.hintLeft--;
+  startTimer();
+  if(!checkSolved()) setMsg('힌트를 썼어요. 남은 한글자 힌트 '+S.hintLeft+'번');
+  paint();
+}
+function doReset(){
+  if(!S.puz) return;
+  resetState(); setMsg(''); selectWord(activeIdx()>=0?activeIdx():0);
+}
+function focusKb(){ try{ $('kb').focus({preventScroll:true}); }catch(e){} }
+
+/* ---------- events ---------- */
+$('grid').addEventListener('click',e=>{
+  const el=e.target.closest('.c'); if(!el) return;
+  selectCell(+el.dataset.x,+el.dataset.y); focusKb();
+});
+const kb=$('kb');
+kb.addEventListener('input',()=>{
+  const v=kb.value;
+  if(v.length===0){ backspace(); }
+  else { const letters=v.toLowerCase().replace(/[^a-z]/g,''); for(const ch of letters) putLetter(ch); }
+  kb.value=' ';
+  try{ kb.setSelectionRange(1,1); }catch(e){}
+});
+document.addEventListener('keydown',e=>{
+  const t=e.target;
+  if(t&&t!==kb&&(t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.tagName==='INPUT')) return;
+  if(!S.puz||e.ctrlKey||e.metaKey||e.altKey) return;
+  const plain=(t===kb||t===document.body||t===document.documentElement);
+  if(/^Key[A-Z]$/.test(e.code)){ e.preventDefault(); putLetter(e.code.charAt(3).toLowerCase()); return; }
+  switch(e.key){
+    case 'Backspace': e.preventDefault(); backspace(); break;
+    case 'ArrowLeft': e.preventDefault(); arrow(-1,0); break;
+    case 'ArrowRight': e.preventDefault(); arrow(1,0); break;
+    case 'ArrowUp': e.preventDefault(); arrow(0,-1); break;
+    case 'ArrowDown': e.preventDefault(); arrow(0,1); break;
+    case 'Tab': if(plain){ e.preventDefault(); nextWord(e.shiftKey?-1:1); } break;
+    case 'Enter': if(plain){ e.preventDefault(); nextWord(1); } break;
+    case ' ': if(plain){ e.preventDefault(); toggleDir(); } break;
+  }
+});
+$('newBtn').addEventListener('click',newPuzzle);
+$('checkBtn').addEventListener('click',doCheck);
+$('letterBtn').addEventListener('click',()=>{ doLetter(); focusKb(); });
+$('resetBtn').addEventListener('click',doReset);
+$('dayFrom').addEventListener('change',e=>{ S.from=+e.target.value; if(S.to<S.from) S.to=S.from; renderDays(); renderPool(); });
+$('dayTo').addEventListener('change',e=>{ S.to=+e.target.value; if(S.from>S.to) S.from=S.to; renderDays(); renderPool(); });
+$('count').addEventListener('change',e=>{ S.count=+e.target.value; save(); renderPool(); });
+$('first').addEventListener('change',e=>{ S.first=e.target.checked; save(); doReset(); });
+
+/* ---------- import ---------- */
+function applyText(text){
+  const {entries,skipped}=parseText(text);
+  const msg=$('importMsg');
+  if(entries.length<5){ msg.textContent='읽은 단어가 '+entries.length+'개예요. 한 줄에 “단어 뜻” 형식으로 5개 이상 붙여넣어 주세요.'; return; }
+  S.lists[S.mode]=entries; S.custom[S.mode]=true; S.sec=0; S.from=1; S.to=1;
+  save(); refreshSettings();
+  const ok=entries.filter(e=>e.ok).length;
+  msg.textContent=entries.length.toLocaleString()+'개를 불러왔어요. 퍼즐에 쓸 수 있는 단어 '+ok.toLocaleString()+'개'+(skipped?(' · 건너뛴 줄 '+skipped+'개'):'')+'.';
+  newPuzzle();
+}
+$('applyBtn').addEventListener('click',()=>applyText($('paste').value));
+$('sampleBtn').addEventListener('click',()=>{
+  S.lists[S.mode]=builtinList(S.mode); S.custom[S.mode]=false; S.sec=0; S.from=1; S.to=1;
+  save(); refreshSettings(); $('importMsg').textContent='기본 단어장으로 되돌렸어요.'; newPuzzle();
+});
+$('file').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const buf=rd.result; let text;
+    try{ text=new TextDecoder('utf-8',{fatal:true}).decode(buf); }
+    catch(err){ try{ text=new TextDecoder('euc-kr').decode(buf); }catch(e2){ text=''; } }
+    $('paste').value=text; applyText(text);
+  };
+  rd.readAsArrayBuffer(f);
+  e.target.value='';
+});
+
+/* ---------- Complete / Perfect ---------- */
+const STATS_KEY='voca-crossword-stats-v1';
+const stats={complete:0,perfect:0};
+function loadStats(){
+  try{
+    const o=JSON.parse(localStorage.getItem(STATS_KEY)||'null');
+    if(o){ stats.complete=Math.max(0,o.complete|0); stats.perfect=Math.max(0,o.perfect|0); }
+  }catch(e){}
+}
+function saveStats(){ try{ localStorage.setItem(STATS_KEY,JSON.stringify(stats)); }catch(e){} }
+function renderStats(bump){
+  $('cntComplete').textContent=stats.complete;
+  $('cntPerfect').textContent=stats.perfect;
+  (bump||[]).forEach(id=>{ const el=$(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); });
+}
+
+/* ---------- 완료 이펙트 · 디지털 시계 ---------- */
+var celTimer=0, segRaf=0;
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const SEGS={a:'2.4,1.5 3.9,0 12.1,0 13.6,1.5 12.1,3 3.9,3',g:'2.4,14 3.9,12.5 12.1,12.5 13.6,14 12.1,15.5 3.9,15.5',d:'2.4,26.5 3.9,25 12.1,25 13.6,26.5 12.1,28 3.9,28',
+  f:'1.5,2.2 3,3.7 3,11.3 1.5,12.8 0,11.3 0,3.7',b:'14.5,2.2 16,3.7 16,11.3 14.5,12.8 13,11.3 13,3.7',e:'1.5,15.2 3,16.7 3,24.3 1.5,25.8 0,24.3 0,16.7',c:'14.5,15.2 16,16.7 16,24.3 14.5,25.8 13,24.3 13,16.7'};
+const DIG={0:'abcdef',1:'bc',2:'abged',3:'abgcd',4:'fgbc',5:'afgcd',6:'afgedc',7:'abc',8:'abcdefg',9:'abcdfg'};
+function segHTML(str){
+  let x=0,out='';
+  for(const ch of str){
+    if(ch===':'){ out+='<g transform="translate('+(x+2)+',0)"><rect class="on" x="0" y="7" width="3.2" height="3.2"/><rect class="on" x="0" y="18" width="3.2" height="3.2"/></g>'; x+=8; continue; }
+    const on=DIG[ch]||'';
+    out+='<g transform="translate('+x+',0)">'+Object.keys(SEGS).map(k=>'<polygon class="off" points="'+SEGS[k]+'"/>').join('')+on.split('').map(k=>'<polygon class="on" points="'+SEGS[k]+'"/>').join('')+'</g>';
+    x+=21;
+  }
+  return '<svg viewBox="0 0 '+(x-3)+' 28" aria-hidden="true"><g transform="skewX(-7) translate(2,0)">'+out+'</g></svg>';
+}
+function showClock(sec,animate){
+  const el=$('segTime'); cancelAnimationFrame(segRaf);
+  const final=fmt(sec);
+  if(!animate||RM||sec<2){ el.innerHTML=segHTML(final); return; }
+  const t0=performance.now(), dur=Math.min(1100,500+sec*6);
+  const step=t=>{ const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+    el.innerHTML=segHTML(k>=1?final:fmt(Math.round(sec*e)));
+    if(k<1) segRaf=requestAnimationFrame(step); };
+  segRaf=requestAnimationFrame(step);
+}
+class Fx{
+  constructor(cv){ this.cv=cv; this.ctx=cv.getContext('2d'); this.ps=[]; this.run=false; this.last=0; this.size(); window.addEventListener('resize',()=>this.size()); }
+  size(){ const d=Math.min(2,devicePixelRatio||1); this.w=innerWidth; this.h=innerHeight; this.cv.width=this.w*d; this.cv.height=this.h*d; this.ctx.setTransform(d,0,0,d,0,0); }
+  add(p){ this.ps.push(p); if(!this.run){ this.run=true; this.last=performance.now(); requestAnimationFrame(t=>this.tick(t)); } }
+  clear(){ this.ps=[]; }
+  tick(t){
+    const dt=Math.min(3,(t-this.last)/16.67); this.last=t; const c=this.ctx; c.clearRect(0,0,this.w,this.h);
+    this.ps=this.ps.filter(p=>this.step(p,dt,c));
+    if(this.ps.length) requestAnimationFrame(t2=>this.tick(t2)); else { this.run=false; c.clearRect(0,0,this.w,this.h); }
+  }
+  step(p,dt,c){
+    if(p.delay>0){ p.delay-=dt; return true; }
+    p.age+=dt; const k=p.age/p.life; if(k>=1) return false;
+    c.globalAlpha=Math.max(0,1-k*k); c.fillStyle=c.strokeStyle=p.col;
+    if(p.t==='ring'){
+      const e=1-Math.pow(1-k,3); c.lineWidth=p.lw*(1-k)+.5; c.shadowColor=p.col; c.shadowBlur=10;
+      c.beginPath(); c.arc(p.x,p.y,p.r0+e*p.r1,0,6.2832); c.stroke(); c.shadowBlur=0;
+    } else if(p.t==='star'){
+      p.vx*=Math.pow(p.fr,dt); p.vy*=Math.pow(p.fr,dt); p.vy+=p.g*dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.rot+=p.vr*dt;
+      const s=p.s*(k<.15?k/.15:1-(k-.15)*.5); c.save(); c.translate(p.x,p.y); c.rotate(p.rot); c.shadowColor=p.col; c.shadowBlur=8;
+      c.beginPath(); for(let i=0;i<10;i++){ const a=i*Math.PI/5-Math.PI/2, r=i%2?s*.42:s; c.lineTo(Math.cos(a)*r,Math.sin(a)*r); } c.closePath(); c.fill(); c.restore();
+    } else if(p.t==='rays'){
+      const e=1-Math.pow(1-k,3); c.lineWidth=3*(1-k)+1; c.lineCap='round'; c.shadowColor=p.col; c.shadowBlur=10;
+      for(let i=0;i<p.n;i++){ const a=p.a0+i*6.2832/p.n, r0=p.r0+e*p.r1*.55, r1=p.r0+e*p.r1; c.beginPath(); c.moveTo(p.x+Math.cos(a)*r0,p.y+Math.sin(a)*r0); c.lineTo(p.x+Math.cos(a)*r1,p.y+Math.sin(a)*r1); c.stroke(); }
+      c.shadowBlur=0;
+    }
+    c.globalAlpha=1; return true;
+  }
+}
+const FXC=['#22E4FF','#7DF3FF','#3DFFA2','#FFFFFF'], FXG=['#FFE600','#FFC700','#FFF6B0','#FFFFFF','#FFD24A'];
+const fxR=(a,b)=>a+Math.random()*(b-a), fxPick=a=>a[Math.floor(Math.random()*a.length)];
+const fxBase=o=>Object.assign({age:0,life:60,delay:0,col:'#fff',x:0,y:0,vx:0,vy:0,g:0,fr:1},o);
+let fxEngine=null;
+function fxGet(){ return fxEngine||(fxEngine=new Fx($('fxc'))); }
+function fxRing(fx,x,y,r1,col,delay,life,lw){ fx.add(fxBase({t:'ring',x,y,r0:4,r1,col,delay,life,lw})); }
+function fxStars(fx,x,y,n,sp,cols,size){ for(let i=0;i<n;i++){ const a=fxR(0,6.2832), s=fxR(sp*.4,sp); fx.add(fxBase({t:'star',x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,fr:.95,g:.03,s:fxR(size*.6,size),rot:fxR(0,6),vr:fxR(-.12,.12),life:fxR(50,80),col:fxPick(cols)})); }
+}
+function fxComplete(x,y){ const fx=fxGet(); fxRing(fx,x,y,54,FXC[0],0,40,3); fxRing(fx,x,y,84,FXC[2],7,46,3); fxRing(fx,x,y,112,FXC[1],14,52,2); fxStars(fx,x,y,9,5,FXC,8); }
+function fxPerfect(x,y){ const fx=fxGet(); fxRing(fx,x,y,70,FXG[0],0,44,5); fxRing(fx,x,y,110,FXG[1],6,52,4); fxRing(fx,x,y,150,FXG[2],12,58,3); fxRing(fx,x,y,190,FXG[3],18,64,2);
+  fx.add(fxBase({t:'rays',x,y,n:16,a0:fxR(0,1),r0:14,r1:120,col:FXG[0],life:46})); fxStars(fx,x,y,18,8,FXG,12); }
+function cancelCelebrate(){ clearTimeout(celTimer); cancelAnimationFrame(segRaf); if(fxEngine) fxEngine.clear(); const i=document.querySelector('#banner .bicon'); if(i) i.classList.remove('hold','show'); }
+function celebrate(kind,sec){
+  cancelCelebrate();
+  showClock(sec,kind!=='repeat');
+  if(kind==='repeat') return;
+  const banner=$('banner'), icon=banner.querySelector('.bicon'), perfect=kind==='perfect';
+  try{ banner.scrollIntoView({block:'nearest'}); }catch(e){}
+  if(RM) return;
+  if(perfect) icon.classList.add('hold');
+  const center=()=>{ const r=icon.getBoundingClientRect(); return [r.left+r.width/2, r.top+r.height/2]; };
+  requestAnimationFrame(()=>{
+    let [x,y]=center(); fxComplete(x,y);
+    if(!perfect) return;
+    celTimer=setTimeout(()=>{
+      [x,y]=center(); icon.classList.remove('hold'); icon.classList.add('show'); fxPerfect(x,y);
+      const fl=$('fxflash'); fl.style.setProperty('--fx',x+'px '+y+'px'); fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on');
+      const tp=$('tilePerfect'); tp.classList.remove('glow'); void tp.offsetWidth; tp.classList.add('glow');
+    },520);
+  });
+}
+
+/* ---------- fullscreen ---------- */
+function fsActive(){ return !!(document.fullscreenElement||document.webkitFullscreenElement); }
+function fsSync(){
+  const on=fsActive()||document.body.classList.contains('focus');
+  const b=$('fsBtn'); b.setAttribute('aria-pressed',String(on));
+  b.setAttribute('aria-label',on?'전체화면 해제':'전체화면');
+  $('fsLabel').textContent=on?'전체화면 해제':'전체화면';
+}
+async function toggleFs(){
+  const root=document.documentElement, body=document.body;
+  if(fsActive()){
+    try{ await (document.exitFullscreen||document.webkitExitFullscreen).call(document); }catch(e){}
+    fsSync(); return;
+  }
+  if(body.classList.contains('focus')){ body.classList.remove('focus'); fsSync(); fit(); return; }
+  const req=root.requestFullscreen||root.webkitRequestFullscreen;
+  if(req){ try{ await req.call(root); fsSync(); return; }catch(e){} }
+  body.classList.add('focus'); fsSync(); fit();
+  setMsg('이 화면에서는 전체화면을 쓸 수 없어서 퍼즐만 크게 보여줘요. 같은 버튼으로 돌아와요.');
+}
+$('fsBtn').addEventListener('click',toggleFs);
+document.addEventListener('fullscreenchange',()=>{ fsSync(); fit(); });
+document.addEventListener('webkitfullscreenchange',()=>{ fsSync(); fit(); });
+
+if(window.ResizeObserver) new ResizeObserver(fit).observe($('gscroll')); else window.addEventListener('resize',fit);
+
+/* ---------- start ---------- */
+load();
+loadStats();
+renderStats();
+renderCount();
+refreshSettings();
+newPuzzle();
+})();
+</script>
+
+</body>
+</html>
